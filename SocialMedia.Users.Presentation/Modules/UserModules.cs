@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SocialMedia.Users.Application.Commands.Example;
 using SocialMedia.Users.Application.Shared;
+using SocialMedia.Users.Application.Users.Commands.UserLogin;
 
 namespace SocialMedia.Users.Presentation.Modules;
 
@@ -16,6 +17,7 @@ public static class UserModules
         var userGroup = app.MapGroup(BASE_URL);
 
         userGroup.MapPut("example/{userId}", ExampleUsers);
+        userGroup.MapPost("login", UserLogin);
     }
 
     private static async Task<IResult> ExampleUsers(
@@ -37,5 +39,19 @@ public static class UserModules
         }
 
         return Results.Created($"{BASE_URL}{result.Value.UserId}", result.Value);
+    }
+
+    private static async Task<IResult> UserLogin(
+    [FromBody] LoginUserCommandRequest request,
+    ISender sender,
+    CancellationToken cancellationToken)
+    {
+        LoginUserCommand command = new LoginUserCommand(request);
+        Result<LoginUserCommandResponse> result = await sender.Send(command, cancellationToken);
+
+        if (result.Value == null)
+            return Results.Content("Usuario bloqueado o inactivo");
+
+        return Results.Ok(result.Value);
     }
 }

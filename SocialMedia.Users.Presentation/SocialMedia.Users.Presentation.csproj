@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="MediatR" Version="14.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.6.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
