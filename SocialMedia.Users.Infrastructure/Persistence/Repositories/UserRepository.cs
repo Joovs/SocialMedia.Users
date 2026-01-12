@@ -13,19 +13,21 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         try
         {
             User user = await (from us in context.Users
-                                      where us.UserId == id
+                                      where us.Id == id
                                       select new User
                                       {
-                                          UserId = us.UserId,
-                                          UserName = us.UserName,
+                                          Id = us.Id,
+                                          Username = us.Username,
+                                          Lastname = us.Lastname,
                                           CreatedAt = us.CreatedAt,
                                           UpdatedAt = us.UpdatedAt,
                                       }).FirstAsync(cancellationToken);
 
             User updatedUser = new User
             {
-                UserId = user.UserId,
-                UserName = "New user",
+                Id = user.Id,
+                Username = "New user",
+                Lastname = user.Lastname,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = DateTime.Now
             };
