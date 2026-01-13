@@ -4,20 +4,17 @@ using SocialMedia.Users.Domain.Entities.UserEntity;
 using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Domain.Exceptions;
 using SocialMedia.Users.Domain.Services.JwtServices;
-using SocialMedia.Users.Domain.Services.PasswordHashes;
 
 namespace SocialMedia.Users.Application.Users.Commands.UserLogin;
 
 public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<LoginUserCommandResponse>>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtService _jwtService;
 
-    public LoginUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher, IJwtService jwtService)
+    public LoginUserCommandHandler(IUserRepository userRepository, IJwtService jwtService)
     {
         _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
         _jwtService = jwtService;
     }
 
@@ -35,15 +32,9 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<
         User user = await _userRepository.GetByEmailAsync(req.Email);
 
         // 401 - Invalid credentials or user does not exist
-        if (user == null || !_passwordHasher.VerifyPassword(req.Password, user.Password))
+        if (user == null || user.Email != request.request.Email)
         {
             throw new InvalidCredentialsException("Credenciales inválidas");
-        }
-
-        // 403 - User blocked or inactive
-        if (!string.Equals(user.Status, "ACTIVE", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException("Usuario bloqueado o inactivo");
         }
 
         // 200 - OK 

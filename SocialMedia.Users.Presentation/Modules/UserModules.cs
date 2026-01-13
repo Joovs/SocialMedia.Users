@@ -21,7 +21,7 @@ public static class UserModules
     }
 
     private static async Task<IResult> ExampleUsers(
-        [FromRoute] int userID,
+        [FromRoute] Guid userID,
         ISender sender,
         CancellationToken cancellationToken
         )
@@ -47,7 +47,7 @@ public static class UserModules
     CancellationToken cancellationToken)
     {
         LoginUserCommand command = new LoginUserCommand(request);
-        Result<LoginUserCommandResponse> result = await sender.Send(command, cancellationToken);
+        var result = await sender.Send(command, cancellationToken);
 
         if (result.Value == null)
             return Results.Content("Usuario bloqueado o inactivo");

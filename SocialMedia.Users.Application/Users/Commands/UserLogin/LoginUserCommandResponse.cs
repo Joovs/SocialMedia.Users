@@ -2,7 +2,7 @@ namespace SocialMedia.Users.Application.Users.Commands.UserLogin;
 
 public class LoginUserCommandResponse
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public required string LastName { get; set; }
     public required string Email { get; set; }

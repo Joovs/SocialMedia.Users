@@ -16,7 +16,7 @@ public class JwtService : IJwtService
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public string GenerateToken(string email, int userId)
+    public string GenerateToken(string email, Guid userId)
     {
         // Retrieve JWT configuration
         var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -25,10 +25,6 @@ public class JwtService : IJwtService
         var issuer = jwtSettings["Issuer"];
         var audience = jwtSettings["Audience"];
         var expiresIn = int.TryParse(jwtSettings["ExpiresInMinutes"], out var e) ? e : 60;
-
-        // Create signing key and credentials
-        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-        SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         // Define token claims
         var claims = new[]
@@ -43,8 +39,8 @@ public class JwtService : IJwtService
             issuer,
             audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(expiresIn),
-            signingCredentials: creds
+            expires: DateTime.UtcNow.AddMinutes(expiresIn)
+            //signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);

@@ -12,7 +12,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
     {
         return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
-    public async Task<User> ExampleUpdateUser(int id, CancellationToken cancellationToken)
+    public async Task<User> ExampleUpdateUser(Guid id, CancellationToken cancellationToken)
     {
         try
         {
@@ -24,7 +24,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
                                           Username = us.Username,
                                           Lastname = us.Lastname,
                                           CreatedAt = us.CreatedAt,
-                                          UpdatedAt = us.UpdatedAt,
+                                          UpdateAt = us.UpdateAt,
                                       }).FirstAsync(cancellationToken);
 
             User updatedUser = new User
@@ -33,7 +33,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
                 Username = "New user",
                 Lastname = user.Lastname,
                 CreatedAt = user.CreatedAt,
-                UpdatedAt = DateTime.Now
+                UpdateAt = DateTime.Now
             };
 
             _context.Users.Update(updatedUser);
