@@ -34,9 +34,10 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
                                {
                                    Id = us.Id,
                                    Username = us.Username,
+                                   FistName = us.FistName,
                                    Lastname = us.Lastname,
                                    Email = us.Email,
-                                   PasswordHash = us.PasswordHash,
+                                   Password = us.Password,
                                    CreatedAt = us.CreatedAt,
                                    UpdatedAt = us.UpdatedAt,
                                }).FirstAsync(cancellationToken);
@@ -45,9 +46,10 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
             {
                 Id = user.Id,
                 Username = "New user",
+                FistName = user.FistName,
                 Lastname = user.Lastname,
                 Email = user.Email,
-                PasswordHash = user.PasswordHash,
+                Password = user.Password,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = DateTime.Now
             };

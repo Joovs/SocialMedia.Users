@@ -40,7 +40,7 @@ public static class UserModules
             return validationResult;
         }
 
-        CreateUserCommand command = new CreateUserCommand(request.Username, request.Lastname, request.Email, request.Password);
+        CreateUserCommand command = new CreateUserCommand(request.Username, request.FistName, request.Lastname, request.Email, request.Password);
         Result<CreateUserCommandResponse> result = await sender.Send(command, cancellationToken);
 
         if (!result.IsSuccess)

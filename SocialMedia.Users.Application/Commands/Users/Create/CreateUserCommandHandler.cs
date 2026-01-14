@@ -25,6 +25,7 @@ public class CreateUserCommandHandler(
             }
 
             string normalizedUsername = request.Username.Trim();
+            string normalizedFistName = request.FistName.Trim();
             string normalizedLastname = request.Lastname.Trim();
             string normalizedEmail = request.Email.Trim().ToLowerInvariant();
             string hashedPassword = _passwordHashingService.Hash(request.Password);
@@ -32,9 +33,10 @@ public class CreateUserCommandHandler(
             User newUser = new User
             {
                 Username = normalizedUsername,
+                FistName = normalizedFistName,
                 Lastname = normalizedLastname,
                 Email = normalizedEmail,
-                PasswordHash = hashedPassword,
+                Password = hashedPassword,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -45,6 +47,7 @@ public class CreateUserCommandHandler(
             {
                 UserId = createdUser.Id,
                 Username = createdUser.Username,
+                FistName = createdUser.FistName,
                 Lastname = createdUser.Lastname,
                 Email = createdUser.Email,
                 CreatedAt = createdUser.CreatedAt
@@ -63,6 +66,11 @@ public class CreateUserCommandHandler(
         if (string.IsNullOrWhiteSpace(command.Username))
         {
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidUsername", "Username is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(command.FistName))
+        {
+            return Result<CreateUserCommandResponse>.Failure(400, "InvalidFistName", "FistName is required.");
         }
 
         if (string.IsNullOrWhiteSpace(command.Lastname))
