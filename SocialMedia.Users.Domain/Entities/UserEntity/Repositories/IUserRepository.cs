@@ -1,6 +1,8 @@
-﻿namespace SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
+﻿using SocialMedia.Users.Domain.Entities.UserEntity.Models.UpdateProfile;
+
+namespace SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 
 public interface IUserRepository
 {
-    public Task<User> ExampleUpdateUser (int id, CancellationToken cancellationToken);
+    public Task<UpdateProfileResponseModel> UpdateProfile (UpdateProfileModel request, CancellationToken cancellationToken);
 }
