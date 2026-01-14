@@ -4,3 +4,16 @@ GET {{SocialMedia.Users.WebApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+POST {{SocialMedia.Users.WebApi_HostAddress}}/api/v1/users/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "dani_dev",
+  "lastname": "Lopez",
+  "email": "dani@example.com",
+  "password": "Sup3rStrong#2024"
+}
+
+###

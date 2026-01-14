@@ -16,4 +16,8 @@
     <ProjectReference Include="..\SocialMedia.Users.Domain\SocialMedia.Users.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
 </Project>

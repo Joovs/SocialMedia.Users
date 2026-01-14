@@ -8,26 +8,46 @@ namespace SocialMedia.Users.Infrastructure.Persistence.Repositories;
 public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
     private readonly ApplicationDbContext _context = context;
+
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _context.Users.AddAsync(user, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return user;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"User could not be created: {ex.Message}", ex);
+        }
+    }
+
     public async Task<User> ExampleUpdateUser(int id, CancellationToken cancellationToken)
     {
         try
         {
-            User user = await (from us in context.Users
-                                      where us.Id == id
-                                      select new User
-                                      {
-                                          Id = us.Id,
-                                          Username = us.Username,
-                                          Lastname = us.Lastname,
-                                          CreatedAt = us.CreatedAt,
-                                          UpdatedAt = us.UpdatedAt,
-                                      }).FirstAsync(cancellationToken);
+            User user = await (from us in _context.Users
+                               where us.Id == id
+                               select new User
+                               {
+                                   Id = us.Id,
+                                   Username = us.Username,
+                                   Lastname = us.Lastname,
+                                   Email = us.Email,
+                                   PasswordHash = us.PasswordHash,
+                                   CreatedAt = us.CreatedAt,
+                                   UpdatedAt = us.UpdatedAt,
+                               }).FirstAsync(cancellationToken);
 
             User updatedUser = new User
             {
                 Id = user.Id,
                 Username = "New user",
                 Lastname = user.Lastname,
+                Email = user.Email,
+                PasswordHash = user.PasswordHash,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = DateTime.Now
             };
@@ -39,7 +59,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         }
         catch (Exception ex)
         {
-            throw new Exception($"User could not be updated: {ex.Message}");
+            throw new Exception($"User could not be updated: {ex.Message}", ex);
         }
     }
 }
