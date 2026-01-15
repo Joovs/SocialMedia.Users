@@ -6,9 +6,9 @@ public sealed record CreateUserRequest(
     [property: Required, StringLength(50, MinimumLength = 3)]
     string Username,
     [property: Required, StringLength(80, MinimumLength = 2)]
-    string FistName,
+    string FirstName,
     [property: Required, StringLength(80, MinimumLength = 2)]
-    string Lastname,
+    string LastName,
     [property: Required, EmailAddress, StringLength(120)]
     string Email,
     [property: Required, StringLength(128, MinimumLength = 8)]

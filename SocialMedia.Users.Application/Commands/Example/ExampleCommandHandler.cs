@@ -16,8 +16,8 @@ public class ExampleCommandHandler(IUserRepository repository) : IRequestHandler
 
             ExampleCommandResponse response = new ExampleCommandResponse
             {
-                UserId = updateUserExample.Id,
-                UserName = updateUserExample.Username
+                Id = updateUserExample.Id,
+                Username = updateUserExample.Username
             };
 
             return Result<ExampleCommandResponse>.Success(response);

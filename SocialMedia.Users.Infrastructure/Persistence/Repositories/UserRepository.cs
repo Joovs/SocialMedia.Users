@@ -24,7 +24,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         }
     }
 
-    public async Task<User> ExampleUpdateUser(int id, CancellationToken cancellationToken)
+    public async Task<User> ExampleUpdateUser(Guid id, CancellationToken cancellationToken)
     {
         try
         {
@@ -34,24 +34,24 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
                                {
                                    Id = us.Id,
                                    Username = us.Username,
-                                   FistName = us.FistName,
-                                   Lastname = us.Lastname,
+                                   FirstName = us.FirstName,
+                                   LastName = us.LastName,
                                    Email = us.Email,
                                    Password = us.Password,
                                    CreatedAt = us.CreatedAt,
-                                   UpdatedAt = us.UpdatedAt,
+                                   UpdateAt = us.UpdateAt,
                                }).FirstAsync(cancellationToken);
 
             User updatedUser = new User
             {
                 Id = user.Id,
                 Username = "New user",
-                FistName = user.FistName,
-                Lastname = user.Lastname,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
                 Password = user.Password,
                 CreatedAt = user.CreatedAt,
-                UpdatedAt = DateTime.Now
+                UpdateAt = DateTime.Now
             };
 
             _context.Users.Update(updatedUser);

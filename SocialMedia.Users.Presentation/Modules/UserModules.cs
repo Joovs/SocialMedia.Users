@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ public static class UserModules
             return validationResult;
         }
 
-        CreateUserCommand command = new CreateUserCommand(request.Username, request.FistName, request.Lastname, request.Email, request.Password);
+        CreateUserCommand command = new CreateUserCommand(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
         Result<CreateUserCommandResponse> result = await sender.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
@@ -61,16 +62,16 @@ public static class UserModules
             );
         }
 
-        return Results.Created($"{BASE_URL}{result.Value.UserId}", result.Value);
+        return Results.Created($"{BASE_URL}{result.Value.Id}", result.Value);
     }
 
     private static async Task<IResult> ExampleUsers(
-        [FromRoute] int userID,
+        [FromRoute] Guid userId,
         ISender sender,
         CancellationToken cancellationToken
         )
     {
-        ExampleCommand command = new ExampleCommand(userID);
+        ExampleCommand command = new ExampleCommand(userId);
         Result<ExampleCommandResponse> result = await sender.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
@@ -91,7 +92,7 @@ public static class UserModules
             );
         }
 
-        return Results.Created($"{BASE_URL}{result.Value.UserId}", result.Value);
+        return Results.Created($"{BASE_URL}{result.Value.Id}", result.Value);
     }
 
     private static IResult? ValidateRequest(CreateUserRequest request)

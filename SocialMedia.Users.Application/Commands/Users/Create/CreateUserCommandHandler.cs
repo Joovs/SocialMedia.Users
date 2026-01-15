@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 using MediatR;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Domain.Entities.UserEntity;
@@ -25,32 +26,35 @@ public class CreateUserCommandHandler(
             }
 
             string normalizedUsername = request.Username.Trim();
-            string normalizedFistName = request.FistName.Trim();
-            string normalizedLastname = request.Lastname.Trim();
+            string normalizedFirstName = request.FirstName.Trim();
+            string normalizedLastName = request.LastName.Trim();
             string normalizedEmail = request.Email.Trim().ToLowerInvariant();
             string hashedPassword = _passwordHashingService.Hash(request.Password);
+            DateTime localNow = GetLocalTime();
 
             User newUser = new User
             {
+                Id = Guid.NewGuid(),
                 Username = normalizedUsername,
-                FistName = normalizedFistName,
-                Lastname = normalizedLastname,
+                FirstName = normalizedFirstName,
+                LastName = normalizedLastName,
                 Email = normalizedEmail,
                 Password = hashedPassword,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = localNow,
+                UpdateAt = localNow
             };
 
             User createdUser = await _repository.CreateUserAsync(newUser, cancellationToken);
 
             var response = new CreateUserCommandResponse
             {
-                UserId = createdUser.Id,
+                Id = createdUser.Id,
                 Username = createdUser.Username,
-                FistName = createdUser.FistName,
-                Lastname = createdUser.Lastname,
+                FirstName = createdUser.FirstName,
+                LastName = createdUser.LastName,
                 Email = createdUser.Email,
-                CreatedAt = createdUser.CreatedAt
+                CreatedAt = createdUser.CreatedAt,
+                UpdateAt = createdUser.UpdateAt
             };
 
             return Result<CreateUserCommandResponse>.Success(response);
@@ -68,14 +72,14 @@ public class CreateUserCommandHandler(
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidUsername", "Username is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(command.FistName))
+        if (string.IsNullOrWhiteSpace(command.FirstName))
         {
-            return Result<CreateUserCommandResponse>.Failure(400, "InvalidFistName", "FistName is required.");
+            return Result<CreateUserCommandResponse>.Failure(400, "InvalidFirstName", "FirstName is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(command.Lastname))
+        if (string.IsNullOrWhiteSpace(command.LastName))
         {
-            return Result<CreateUserCommandResponse>.Failure(400, "InvalidLastname", "Lastname is required.");
+            return Result<CreateUserCommandResponse>.Failure(400, "InvalidLastName", "LastName is required.");
         }
 
         if (string.IsNullOrWhiteSpace(command.Password))
@@ -95,5 +99,26 @@ public class CreateUserCommandHandler(
         }
 
         return null;
+    }
+
+    private static DateTime GetLocalTime()
+    {
+        try
+        {
+            string timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "Central Standard Time (Mexico)"
+                : "America/Mexico_City";
+
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            return DateTime.Now;
+        }
+        catch (InvalidTimeZoneException)
+        {
+            return DateTime.Now;
+        }
     }
 }
