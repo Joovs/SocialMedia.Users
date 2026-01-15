@@ -1,0 +1,85 @@
+﻿using MediatR;
+using SocialMedia.Users.Application.Common.Validations;
+using SocialMedia.Users.Application.Shared;
+using SocialMedia.Users.Domain.Entities.UserEntity.Models.UpdateProfile;
+using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
+using SocialMedia.Users.Domain.Exceptions;
+using SocialMedia.Users.Domain.Services.Hasher;
+using System.Text.RegularExpressions;
+
+namespace SocialMedia.Users.Application.Commands.UpdateProfile;
+
+public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, Result<UpdateProfileCommandResponse>>
+{
+    private readonly IUserRepository _userRepository;
+    private readonly IHasher _hasher;
+
+    public UpdateProfileCommandHandler(IUserRepository userRepository, IHasher hasher)
+    {
+        _userRepository = userRepository;
+        _hasher = hasher;
+    }
+
+    public async Task<Result<UpdateProfileCommandResponse>> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
+    {
+        try
+        {
+
+            if (request is null)
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Request cannot be null");
+            }
+            
+
+            if (!ValidationRules.IsValidId(request.request.Id))
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Invalid ID");
+            }
+
+            if (!ValidationRules.HasCorrectLength(request.request.Username, 255) ||
+                !ValidationRules.HasCorrectLength(request.request.Lastname, 255) ||
+                !ValidationRules.HasCorrectLength(request.request.Email, 255) ||
+                !ValidationRules.HasCorrectLength(request.request.Password, 255) ||
+                !ValidationRules.IsValidPassword(request.request.Password) ||
+                !ValidationRules.IsValidEmail(request.request.Email))
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Invalid data");
+            }
+
+            string passwordHashed = _hasher.hashPassword(request.request.Password);
+
+            UpdateProfileModel model = new UpdateProfileModel
+            {
+                Id = request.request.Id,
+                Username = request.request.Username,
+                Lastname = request.request.Lastname,
+                Email = request.request.Email,
+                Password = passwordHashed
+            };
+
+            UpdateProfileResponseModel response = await _userRepository.UpdateProfile(model, cancellationToken);
+
+
+            UpdateProfileCommandResponse profileUpdated = new UpdateProfileCommandResponse
+            {
+                Message = response.Message,
+                UpdatedAt = response.UpdatedAt
+            };
+
+            return Result<UpdateProfileCommandResponse>.Success(profileUpdated);
+        }
+        catch (UserNotFoundException ex)
+        {
+            return Result<UpdateProfileCommandResponse>.Failure(400, "InvalidID", ex.Message);
+        }
+        catch (DuplicateEmailException ex)
+        {
+            return Result<UpdateProfileCommandResponse>.Failure(400, "InvalidEmail", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return Result<UpdateProfileCommandResponse>.Failure(
+                500, "InternalServerError", ex.Message);
+        }
+    }
+}
