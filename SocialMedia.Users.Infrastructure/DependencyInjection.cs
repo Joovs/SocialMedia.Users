@@ -4,6 +4,7 @@ using SocialMedia.Users.Domain.Entities.UserEntity;
 using SocialMedia.Users.Domain.Services;
 using SocialMedia.Users.Infrastructure.InjectionManagers;
 using SocialMedia.Users.Infrastructure.Security;
+using SocialMedia.Users.Infrastructure.Services;
 
 namespace SocialMedia.Users.Infrastructure;
 
@@ -13,6 +14,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<IPasswordHashingService, PasswordHashingService>();
+        services.AddSingleton<IDateTimeProvider, TimeZoneProvider>();
         RepositoriesManager.AddRepositories(services);
 
         return services;

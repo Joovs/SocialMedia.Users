@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SocialMedia.Users.Application;
 using SocialMedia.Users.Infrastructure;
+using SocialMedia.Users.Infrastructure.Configuration;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
 using SocialMedia.Users.Presentation.Modules;
 
@@ -22,6 +23,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
+builder.Services.Configure<TimeZoneSettings>(builder.Configuration.GetSection("TimeZone"));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SocialMedia.Users.Application.Commands.Users.Create;
-using SocialMedia.Users.Application.Commands.Example;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Presentation.Contracts.Users;
 using System.ComponentModel.DataAnnotations;
@@ -27,7 +26,6 @@ public static class UserModules
                  .ProducesValidationProblem()
                  .ProducesProblem(StatusCodes.Status400BadRequest)
                  .ProducesProblem(StatusCodes.Status500InternalServerError);
-        userGroup.MapPut("example/{userId}", ExampleUsers);
     }
 
     private static async Task<IResult> CreateUser(
@@ -57,36 +55,6 @@ public static class UserModules
         {
             return Results.Problem(
                 detail: "The user was created but the payload could not be generated.",
-                statusCode: 500,
-                title: "UserPayloadMissing"
-            );
-        }
-
-        return Results.Created($"{BASE_URL}{result.Value.Id}", result.Value);
-    }
-
-    private static async Task<IResult> ExampleUsers(
-        [FromRoute] Guid userId,
-        ISender sender,
-        CancellationToken cancellationToken
-        )
-    {
-        ExampleCommand command = new ExampleCommand(userId);
-        Result<ExampleCommandResponse> result = await sender.Send(command, cancellationToken);
-
-        if (!result.IsSuccess)
-        {
-            return Results.Problem(
-                detail: result.Error?.ErrorMessage ?? result.Message,
-                statusCode: result.StatusCode ?? 400,
-                title: result.Error?.ErrorCode
-            );
-        }
-
-        if (result.Value is null)
-        {
-            return Results.Problem(
-                detail: "The user payload could not be generated.",
                 statusCode: 500,
                 title: "UserPayloadMissing"
             );

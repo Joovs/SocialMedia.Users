@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SocialMedia.Users.Application.Commands.Users.Create;
 using SocialMedia.Users.Domain.Entities.UserEntity;
@@ -11,11 +12,18 @@ public class CreateUserCommandHandlerTests
 {
     private readonly Mock<IUserRepository> _repositoryMock = new();
     private readonly Mock<IPasswordHashingService> _passwordHashingServiceMock = new();
+    private readonly Mock<IDateTimeProvider> _dateTimeProviderMock = new();
+    private readonly Mock<ILogger<CreateUserCommandHandler>> _loggerMock = new();
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
     {
-        _handler = new CreateUserCommandHandler(_repositoryMock.Object, _passwordHashingServiceMock.Object);
+        _dateTimeProviderMock.Setup(p => p.GetLocalTime()).Returns(new DateTime(2025, 1, 14, 10, 0, 0));
+        _handler = new CreateUserCommandHandler(
+            _repositoryMock.Object,
+            _passwordHashingServiceMock.Object,
+            _dateTimeProviderMock.Object,
+            _loggerMock.Object);
     }
 
     [Fact]
@@ -38,6 +46,8 @@ public class CreateUserCommandHandlerTests
         _passwordHashingServiceMock.Setup(p => p.Hash(command.Password)).Returns("hashed-value");
 
         User? capturedUser = null;
+        DateTime now = new DateTime(2025, 1, 14, 12, 0, 0);
+        _dateTimeProviderMock.Setup(p => p.GetLocalTime()).Returns(now);
         _repositoryMock.Setup(r => r.CreateUserAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
             .Callback<User, CancellationToken>((user, _) => capturedUser = user)
             .ReturnsAsync((User user, CancellationToken _) =>
@@ -55,7 +65,8 @@ public class CreateUserCommandHandlerTests
 
         capturedUser.Should().NotBeNull();
         capturedUser!.Password.Should().Be("hashed-value");
-        capturedUser.CreatedAt.Should().BeCloseTo(capturedUser.UpdateAt, TimeSpan.FromSeconds(1));
+        capturedUser.CreatedAt.Should().Be(now);
+        capturedUser.UpdateAt.Should().Be(now);
         capturedUser.Username.Should().Be("DemoUser");
         capturedUser.Email.Should().Be("test@mail.com");
     }

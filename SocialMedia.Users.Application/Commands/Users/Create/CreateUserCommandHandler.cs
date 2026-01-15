@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Domain.Entities.UserEntity;
 using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
@@ -10,10 +10,14 @@ namespace SocialMedia.Users.Application.Commands.Users.Create;
 
 public class CreateUserCommandHandler(
     IUserRepository repository,
-    IPasswordHashingService passwordHashingService) : IRequestHandler<CreateUserCommand, Result<CreateUserCommandResponse>>
+    IPasswordHashingService passwordHashingService,
+    IDateTimeProvider dateTimeProvider,
+    ILogger<CreateUserCommandHandler> logger) : IRequestHandler<CreateUserCommand, Result<CreateUserCommandResponse>>
 {
     private readonly IUserRepository _repository = repository;
     private readonly IPasswordHashingService _passwordHashingService = passwordHashingService;
+    private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
+    private readonly ILogger<CreateUserCommandHandler> _logger = logger;
 
     public async Task<Result<CreateUserCommandResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
@@ -30,7 +34,7 @@ public class CreateUserCommandHandler(
             string normalizedLastName = request.LastName.Trim();
             string normalizedEmail = request.Email.Trim().ToLowerInvariant();
             string hashedPassword = _passwordHashingService.Hash(request.Password);
-            DateTime localNow = GetLocalTime();
+            DateTime localNow = _dateTimeProvider.GetLocalTime();
 
             User newUser = new User
             {
@@ -61,6 +65,7 @@ public class CreateUserCommandHandler(
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error creating user {Username}", request.Username);
             return Result<CreateUserCommandResponse>.Failure(500, "CreateUserError", ex.Message);
         }
     }
@@ -101,24 +106,4 @@ public class CreateUserCommandHandler(
         return null;
     }
 
-    private static DateTime GetLocalTime()
-    {
-        try
-        {
-            string timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? "Central Standard Time (Mexico)"
-                : "America/Mexico_City";
-
-            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
-        }
-        catch (TimeZoneNotFoundException)
-        {
-            return DateTime.Now;
-        }
-        catch (InvalidTimeZoneException)
-        {
-            return DateTime.Now;
-        }
-    }
 }

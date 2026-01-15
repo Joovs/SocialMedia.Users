@@ -24,44 +24,4 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         }
     }
 
-    public async Task<User> ExampleUpdateUser(Guid id, CancellationToken cancellationToken)
-    {
-        try
-        {
-            User user = await (from us in _context.Users
-                               where us.Id == id
-                               select new User
-                               {
-                                   Id = us.Id,
-                                   Username = us.Username,
-                                   FirstName = us.FirstName,
-                                   LastName = us.LastName,
-                                   Email = us.Email,
-                                   Password = us.Password,
-                                   CreatedAt = us.CreatedAt,
-                                   UpdateAt = us.UpdateAt,
-                               }).FirstAsync(cancellationToken);
-
-            User updatedUser = new User
-            {
-                Id = user.Id,
-                Username = "New user",
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                CreatedAt = user.CreatedAt,
-                UpdateAt = DateTime.Now
-            };
-
-            _context.Users.Update(updatedUser);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return updatedUser;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"User could not be updated: {ex.Message}", ex);
-        }
-    }
 }
