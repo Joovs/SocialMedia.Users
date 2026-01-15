@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,19 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="14.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SocialMedia.Users.Domain\SocialMedia.Users.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SocialMedia.Users.Application.Abstractions\SocialMedia.Users.Application.Abstractions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Queries\" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.20" />
   </ItemGroup>
 
 </Project>

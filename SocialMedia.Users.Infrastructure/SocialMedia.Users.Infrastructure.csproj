@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SocialMedia.Users.Application\SocialMedia.Users.Application.csproj" />
     <ProjectReference Include="..\SocialMedia.Users.Domain\SocialMedia.Users.Domain.csproj" />
+    <ProjectReference Include="..\SocialMedia.Users.Application.Abstractions\SocialMedia.Users.Application.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

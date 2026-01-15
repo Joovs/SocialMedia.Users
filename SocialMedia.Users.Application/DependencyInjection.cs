@@ -12,6 +12,10 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
         });
 
+        // Register command handlers that are used directly by controllers
+        services.AddScoped<Commands.Follow.FollowUserCommandHandler>();
+        services.AddScoped<Commands.Follow.UnfollowUserCommandHandler>();
+
         return services;
     }
 }
