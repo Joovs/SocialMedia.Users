@@ -11,6 +11,5 @@ public class ApplicationDbContext : DbContext
 
     // DbSets (referenciando a las tablas de la base de datos)
     public virtual DbSet<User> Users { get; set; }
-
-
+    public virtual DbSet<Posts> Posts { get; set; }
 }

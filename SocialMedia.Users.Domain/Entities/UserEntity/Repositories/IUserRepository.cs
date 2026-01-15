@@ -2,5 +2,6 @@
 
 public interface IUserRepository
 {
-    public Task<User> ExampleUpdateUser (int id, CancellationToken cancellationToken);
+    public Task<User> ExampleUpdateUser(Guid id, CancellationToken cancellationToken);
+    public Task<UserProfile> SeeProfile(Guid userId, CancellationToken cancellationToken);
 }
