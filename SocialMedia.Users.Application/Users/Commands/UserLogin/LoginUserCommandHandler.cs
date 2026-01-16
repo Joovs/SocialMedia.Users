@@ -21,7 +21,6 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<
     public async Task<Result<LoginUserCommandResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         LoginUserCommandRequest req = request.request;
-
         // 400 - Missing required data
         if (req == null || string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.Password))
         {

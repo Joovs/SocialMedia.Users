@@ -4,9 +4,9 @@ public class LoginUserCommandResponse
 {
     public Guid UserId { get; set; }
     public string FirstName { get; set; } = string.Empty;
-    public required string LastName { get; set; }
-    public required string Email { get; set; }
-    public required string Message { get; set; }
-    public required string Token { get; set; }
+    public required string LastName { get; set; } = string.Empty;
+    public required string Email { get; set; } = string.Empty;
+    public required string Message { get; set; } = string.Empty;
+    public required string Token { get; set; } = string.Empty;
     public required int HttpStatus { get; set; }
 }

@@ -10,7 +10,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
     private readonly ApplicationDbContext _context = context;
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email );
     }
     public async Task<User> ExampleUpdateUser(Guid id, CancellationToken cancellationToken)
     {
