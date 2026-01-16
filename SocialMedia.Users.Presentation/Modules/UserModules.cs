@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using SocialMedia.Users.Application.Commands.Example;
+using SocialMedia.Users.Application.Commands.UpdateProfile;
 using SocialMedia.Users.Application.Shared;
 
 namespace SocialMedia.Users.Presentation.Modules;
@@ -15,17 +15,17 @@ public static class UserModules
     {
         var userGroup = app.MapGroup(BASE_URL);
 
-        userGroup.MapPut("example/{userId}", ExampleUsers);
+        userGroup.MapPut("profile", UpdateProfile);
     }
 
-    private static async Task<IResult> ExampleUsers(
-        [FromRoute] int userID,
+    private static async Task<IResult> UpdateProfile(
+        [FromBody] UpdateProfileCommandRequest request,
         ISender sender,
         CancellationToken cancellationToken
         )
     {
-        ExampleCommand command = new ExampleCommand(userID);
-        Result<ExampleCommandResponse> result = await sender.Send(command, cancellationToken);
+        UpdateProfileCommand command = new UpdateProfileCommand(request);
+        Result<UpdateProfileCommandResponse> result = await sender.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -36,6 +36,6 @@ public static class UserModules
             );
         }
 
-        return Results.Created($"{BASE_URL}{result.Value.UserId}", result.Value);
+        return Results.Created($"{BASE_URL}{result}", result.Value);
     }
 }
