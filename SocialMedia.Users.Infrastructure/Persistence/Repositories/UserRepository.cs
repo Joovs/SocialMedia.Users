@@ -37,13 +37,17 @@ public class UserRepository : IUserRepository
         user.Lastname = request.Lastname;
         user.Email = request.Email;
         user.Password = request.Password;
-        user.UpdatedAt = DateTime.UtcNow;
+        user.UpdatedAt = DateTime.Now;
 
         await _context.SaveChangesAsync(cancellationToken);
 
         return new UpdateProfileResponseModel
         {
-            Message = "Profile successfully updated",
+            Id = request.Id,
+            Username = user.Username,
+            Lastname = user.Lastname,
+            Email = user.Email,
+            Password = user.Password,
             UpdatedAt = user.UpdatedAt
         };
     }
