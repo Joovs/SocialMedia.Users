@@ -14,7 +14,7 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
     {
         if (request is null || request.userId == Guid.Empty)
         {
-            return Result<SeeProfileQueryResponse>.Failure(400, "Bad Request", "Invalid Credentials");
+            return Result<SeeProfileQueryResponse>.Failure(400, "Bad Request", "Invalid Data");
         }
         try
         {
@@ -22,7 +22,7 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
 
             if (userProfile is null)
             {
-                return Result<SeeProfileQueryResponse>.Failure(404, "UserNotFoudException", "User not found");
+                return Result<SeeProfileQueryResponse>.Failure(401, "Unauthorized", "Invalid Credentials");
             }
 
             return Result<SeeProfileQueryResponse>.Success(InstantiateSeeProfileResponse(userProfile));
