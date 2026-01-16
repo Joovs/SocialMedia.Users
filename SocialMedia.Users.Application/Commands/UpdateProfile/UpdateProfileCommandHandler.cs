@@ -30,20 +30,31 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
                 return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Request cannot be null");
             }
             
-
             if (!ValidationRules.IsValidId(request.request.Id))
             {
-                return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Invalid ID");
+                return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid ID", "ID must be greater than 0");
             }
 
-            if (!ValidationRules.HasCorrectLength(request.request.Username, 255) ||
-                !ValidationRules.HasCorrectLength(request.request.Lastname, 255) ||
-                !ValidationRules.HasCorrectLength(request.request.Email, 255) ||
-                !ValidationRules.HasCorrectLength(request.request.Password, 255) ||
-                !ValidationRules.IsValidPassword(request.request.Password) ||
+            if (!ValidationRules.HasCorrectLength(request.request.Username, 255))
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid username", "Username must be greater than 0 and less than 255 characters");
+            }
+
+            if (!ValidationRules.HasCorrectLength(request.request.Lastname, 255))
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Lastname must be greater than 0 and less than 255 characters");
+            }
+
+            if (!ValidationRules.HasCorrectLength(request.request.Email, 255) ||
                 !ValidationRules.IsValidEmail(request.request.Email))
             {
-                return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Invalid data");
+                return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid email", "You must add a valid email address");
+            }
+
+            if (!ValidationRules.HasCorrectLength(request.request.Password, 255) ||
+                !ValidationRules.IsValidPassword(request.request.Password))
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid password", "The password must be at least 8 characters long, and include one lowercase letter, one uppercase letter, one number, and one special character.");
             }
 
             string passwordHashed = _hasher.hashPassword(request.request.Password);
@@ -62,7 +73,7 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
 
             UpdateProfileCommandResponse profileUpdated = new UpdateProfileCommandResponse
             {
-                Message = response.Message,
+                Message = "User profile successfully updated",
                 UpdatedAt = response.UpdatedAt
             };
 
@@ -74,7 +85,7 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
         }
         catch (DuplicateEmailException ex)
         {
-            return Result<UpdateProfileCommandResponse>.Failure(400, "InvalidEmail", ex.Message);
+            return Result<UpdateProfileCommandResponse>.Failure(409, "InvalidEmail", ex.Message);
         }
         catch (Exception ex)
         {
