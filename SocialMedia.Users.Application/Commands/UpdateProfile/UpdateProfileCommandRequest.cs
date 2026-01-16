@@ -2,9 +2,10 @@
 
 public class UpdateProfileCommandRequest
 {
-    public required int Id { get; set; }
+    public required Guid Id { get; set; }
     public string Username { get; set; } = string.Empty;
-    public string Lastname { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 }

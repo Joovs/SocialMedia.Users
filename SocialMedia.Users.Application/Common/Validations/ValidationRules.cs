@@ -4,8 +4,13 @@ namespace SocialMedia.Users.Application.Common.Validations;
 
 public static class ValidationRules
 {
-    public static bool IsValidId(int id)
-        => id > 0;
+    public static bool IsValidId(Guid id)
+    {
+        if (id == Guid.Empty)
+            return false;
+
+        return true;
+    }
 
     public static bool HasCorrectLength(string value, int maxLength)
     {

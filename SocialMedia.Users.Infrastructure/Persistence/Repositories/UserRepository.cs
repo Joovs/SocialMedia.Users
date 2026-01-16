@@ -34,10 +34,11 @@ public class UserRepository : IUserRepository
         }
 
         user.Username = request.Username;
-        user.Lastname = request.Lastname;
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
         user.Email = request.Email;
         user.Password = request.Password;
-        user.UpdatedAt = DateTime.Now;
+        user.UpdateAt = DateTime.Now;
 
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -45,10 +46,11 @@ public class UserRepository : IUserRepository
         {
             Id = request.Id,
             Username = user.Username,
-            Lastname = user.Lastname,
+            FirstName = request.FirstName,
+            LastName = user.LastName,
             Email = user.Email,
             Password = user.Password,
-            UpdatedAt = user.UpdatedAt
+            UpdatedAt = user.UpdateAt
         };
     }
 }

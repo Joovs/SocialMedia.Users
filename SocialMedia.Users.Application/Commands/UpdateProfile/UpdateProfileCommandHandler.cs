@@ -32,7 +32,7 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
             
             if (!ValidationRules.IsValidId(request.request.Id))
             {
-                return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid ID", "ID must be greater than 0");
+                return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid ID", "ID must be a valid Guid");
             }
 
             if (!ValidationRules.HasCorrectLength(request.request.Username, 255))
@@ -40,7 +40,12 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
                 return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid username", "Username must be greater than 0 and less than 255 characters");
             }
 
-            if (!ValidationRules.HasCorrectLength(request.request.Lastname, 255))
+            if (!ValidationRules.HasCorrectLength(request.request.FirstName, 255))
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Firstname must be greater than 0 and less than 255 characters");
+            }
+
+            if (!ValidationRules.HasCorrectLength(request.request.LastName, 255))
             {
                 return Result<UpdateProfileCommandResponse>.Failure(400, "BadRequest", "Lastname must be greater than 0 and less than 255 characters");
             }
@@ -63,7 +68,8 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
             {
                 Id = request.request.Id,
                 Username = request.request.Username,
-                Lastname = request.request.Lastname,
+                FirstName = request.request.FirstName,
+                LastName = request.request.LastName,
                 Email = request.request.Email,
                 Password = passwordHashed
             };
