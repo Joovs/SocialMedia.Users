@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SocialMedia.Users.Domain.Entities.FollowsEntity;
 using SocialMedia.Users.Domain.Entities.UserEntity;
 
 namespace SocialMedia.Users.Infrastructure.Persistence.Context;
@@ -10,7 +11,8 @@ public class ApplicationDbContext : DbContext
     }
 
     // DbSets (referenciando a las tablas de la base de datos)
-    public virtual DbSet<User> Users { get; set; }
+    public required virtual DbSet<User> Users { get; set; }
+    public required virtual DbSet<Follows> Follows { get; set; }
 
 
 }
