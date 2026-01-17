@@ -1,9 +1,7 @@
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Users.Domain.Services.JwtServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace SocialMedia.Users.Infrastructure.Services;
 
