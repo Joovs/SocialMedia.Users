@@ -1,5 +1,4 @@
-﻿using SocialMedia.Users.Application.DTO;
-using SocialMedia.Users.Domain.Entities.FollowsEntity.Models.SeeFollowers;
+﻿using SocialMedia.Users.Domain.Entities.FollowsEntity.Models.SeeFollowers;
 
 namespace SocialMedia.Users.Application.Queries.SeeFollowers;
 
