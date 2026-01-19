@@ -7,9 +7,9 @@ namespace SocialMedia.Users.Application.Queries.SeeFollowers;
 
 public class SeeFollowersQueryHandler : IQueryHandler<SeeFollowersQuery, SeeFollowersQueryResponse>
 {
-    private readonly IFollowerRepository _repository;
+    private readonly IFollowRepository _repository;
 
-    public SeeFollowersQueryHandler(IFollowerRepository repository)
+    public SeeFollowersQueryHandler(IFollowRepository repository)
     {
         _repository = repository;
     }
