@@ -8,36 +8,5 @@ namespace SocialMedia.Users.Infrastructure.Persistence.Repositories;
 public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
     private readonly ApplicationDbContext _context = context;
-    public async Task<User> ExampleUpdateUser(int id, CancellationToken cancellationToken)
-    {
-        try
-        {
-            User user = await (from us in context.Users
-                                      where us.UserId == id
-                                      select new User
-                                      {
-                                          UserId = us.UserId,
-                                          UserName = us.UserName,
-                                          CreatedAt = us.CreatedAt,
-                                          UpdatedAt = us.UpdatedAt,
-                                      }).FirstAsync(cancellationToken);
 
-            User updatedUser = new User
-            {
-                UserId = user.UserId,
-                UserName = "New user",
-                CreatedAt = user.CreatedAt,
-                UpdatedAt = DateTime.Now
-            };
-
-            _context.Users.Update(updatedUser);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return updatedUser;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"User could not be updated: {ex.Message}");
-        }
-    }
 }
