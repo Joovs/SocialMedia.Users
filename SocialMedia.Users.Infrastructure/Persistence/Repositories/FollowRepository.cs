@@ -6,11 +6,11 @@ using SocialMedia.Users.Infrastructure.Persistence.Context;
 
 namespace SocialMedia.Users.Infrastructure.Persistence.Repositories;
 
-public class FollowerRepository : IFollowerRepository
+public class FollowRepository : IFollowRepository
 {
     private readonly ApplicationDbContext _context;
 
-    public FollowerRepository(ApplicationDbContext context)
+    public FollowRepository(ApplicationDbContext context)
     {
         _context = context;
     }
