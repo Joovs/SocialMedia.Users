@@ -10,6 +10,12 @@ public class ApplicationDbContext : DbContext
     {
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Follows>()
+            .HasKey(f => new { f.FollowerId, f.FollowingId });
+    }
+
     // DbSets (referenciando a las tablas de la base de datos)
     public required virtual DbSet<User> Users { get; set; }
     public required virtual DbSet<Follows> Follows { get; set; }
