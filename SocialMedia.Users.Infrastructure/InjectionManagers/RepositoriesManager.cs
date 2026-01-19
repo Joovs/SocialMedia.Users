@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SocialMedia.Users.Domain.Entities.FollowsEntity.Repositories;
 using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Infrastructure.Persistence.Repositories;
 
@@ -9,6 +10,7 @@ public static class RepositoriesManager
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IFollowRepository, FollowRepository>();
 
         return services;
     }
