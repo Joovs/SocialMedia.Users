@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Domain.Entities.UserEntity;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
 
 namespace SocialMedia.Users.Infrastructure.Persistence.Repositories;
@@ -8,7 +8,7 @@ namespace SocialMedia.Users.Infrastructure.Persistence.Repositories;
 public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
     private readonly ApplicationDbContext _context = context;
-    public async Task<User> ExampleUpdateUser(int id, CancellationToken cancellationToken)
+    public async Task<User> ExampleUpdateUser(Guid id, CancellationToken cancellationToken)
     {
         try
         {
@@ -41,5 +41,11 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         {
             throw new Exception($"User could not be updated: {ex.Message}");
         }
+    }
+
+    public async Task<bool> ExistsAsync(Guid userId)
+    {
+        return await _context.Users
+            .AnyAsync(u => u.Id == userId);
     }
 }

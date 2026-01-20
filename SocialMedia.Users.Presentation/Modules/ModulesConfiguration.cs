@@ -7,5 +7,6 @@ public class ModulesConfiguration
     public static void Configure(WebApplication app)
     {
         app.AddUserModules();
+        app.AddUserFollowingModule();
     }
 }

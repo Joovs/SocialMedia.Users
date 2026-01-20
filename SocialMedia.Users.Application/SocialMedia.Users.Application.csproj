@@ -14,8 +14,4 @@
     <ProjectReference Include="..\SocialMedia.Users.Domain\SocialMedia.Users.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Queries\" />
-  </ItemGroup>
-
 </Project>
