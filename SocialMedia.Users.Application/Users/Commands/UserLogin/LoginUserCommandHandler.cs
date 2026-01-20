@@ -4,6 +4,7 @@ using SocialMedia.Users.Domain.Entities.UserEntity;
 using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Domain.Exceptions;
 using SocialMedia.Users.Domain.Services.JwtServices;
+using SocialMedia.Users.Domain.Services.PasswordHashes;
 
 namespace SocialMedia.Users.Application.Users.Commands.UserLogin;
 
@@ -11,11 +12,13 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtService;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public LoginUserCommandHandler(IUserRepository userRepository, IJwtService jwtService)
+    public LoginUserCommandHandler(IUserRepository userRepository, IJwtService jwtService, IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
         _jwtService = jwtService;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<LoginUserCommandResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -32,6 +35,12 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<
 
         // 401 - Invalid credentials or user does not exist
         if (user == null || user.Email != request.request.Email)
+        {
+            throw new InvalidCredentialsException("Credenciales inválidas");
+        }
+
+        // Verify password against stored hash
+        if (!_passwordHasher.VerifyPassword(req.Password, user.Password))
         {
             throw new InvalidCredentialsException("Credenciales inválidas");
         }

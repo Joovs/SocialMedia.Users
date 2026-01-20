@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using SocialMedia.Users.Domain.Services.JwtServices;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace SocialMedia.Users.Infrastructure.Services;
 
@@ -24,6 +26,19 @@ public class JwtService : IJwtService
         var audience = jwtSettings["Audience"];
         var expiresIn = int.TryParse(jwtSettings["ExpiresInMinutes"], out var e) ? e : 60;
 
+        if (string.IsNullOrWhiteSpace(secretKey))
+        {
+            throw new InvalidOperationException("JWT secret is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(issuer) || string.IsNullOrWhiteSpace(audience))
+        {
+            throw new InvalidOperationException("JWT issuer or audience is not configured.");
+        }
+
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+
         // Define token claims
         var claims = new[]
         {
@@ -37,9 +52,8 @@ public class JwtService : IJwtService
             issuer,
             audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(expiresIn)
-            //signingCredentials: creds
-        );
+            expires: DateTime.UtcNow.AddMinutes(expiresIn),
+            signingCredentials: signingCredentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

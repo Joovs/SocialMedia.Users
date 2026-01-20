@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Application;
 using SocialMedia.Users.Application.Users.Commands.UserLogin;
@@ -28,7 +27,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    string connectionString = builder.Configuration.GetConnectionString("TestDataBase");
+    string connectionString = builder.Configuration.GetConnectionString("TestDataBase")
+        ?? throw new InvalidOperationException("Connection string 'TestDataBase' not found.");
     options.UseSqlServer(connectionString);
 });
 builder.Services.AddScoped<ApplicationDbContext>();
