@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Application;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Users.Commands.UserLogin;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Domain.Services.JwtServices;
 using SocialMedia.Users.Domain.Services.PasswordHashes;
 using SocialMedia.Users.Infrastructure;

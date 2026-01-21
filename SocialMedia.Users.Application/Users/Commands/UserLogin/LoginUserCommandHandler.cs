@@ -1,7 +1,7 @@
 using MediatR;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Domain.Entities.UserEntity;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Domain.Exceptions;
 using SocialMedia.Users.Domain.Services.JwtServices;
 using SocialMedia.Users.Domain.Services.PasswordHashes;

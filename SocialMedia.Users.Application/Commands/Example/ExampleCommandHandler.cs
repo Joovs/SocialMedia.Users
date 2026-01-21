@@ -1,7 +1,7 @@
 ﻿using MediatR;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Domain.Entities.UserEntity;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 
 namespace SocialMedia.Users.Application.Commands.Example;
 

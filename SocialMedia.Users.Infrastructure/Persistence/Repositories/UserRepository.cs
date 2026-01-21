@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Domain.Entities.UserEntity;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
 
 namespace SocialMedia.Users.Infrastructure.Persistence.Repositories;
