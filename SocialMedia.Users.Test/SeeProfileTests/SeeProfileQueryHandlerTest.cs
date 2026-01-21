@@ -11,13 +11,9 @@ public class SeeProfileQueryHandlerTest
     private readonly CancellationToken _cancellationToken = new();
 
     [Fact]
-    public async Task SeeProfileQueryHandler_Success()
+    public async Task seeProfileQueryHandler_Success()
     {
         var userId = Guid.NewGuid();
-        SeeProfileQueryRequest seeProfile = new()
-        {
-            UserId = Guid.NewGuid()
-        };
         UserProfile userProfile = new();
         SeeProfileQueryResponse seeProfileQueryResponse = new();
         _mockIUserRepository.Setup(x => x.SeeProfile(userId, _cancellationToken)).ReturnsAsync(userProfile);

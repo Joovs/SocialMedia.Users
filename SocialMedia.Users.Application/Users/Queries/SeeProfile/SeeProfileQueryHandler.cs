@@ -9,7 +9,6 @@ namespace SocialMedia.Users.Application.Users.Queries.SeeProfile;
 public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandler<SeeProfileQuery, Result<SeeProfileQueryResponse>>
 {
     private readonly IUserRepository _repository = repository;
-    private readonly CancellationToken cancellationToken;
     public async Task<Result<SeeProfileQueryResponse>> Handle(SeeProfileQuery request, CancellationToken cancellationToken)
     {
         if (request is null || request.userId == Guid.Empty)
@@ -27,9 +26,9 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
 
             return Result<SeeProfileQueryResponse>.Success(InstantiateSeeProfileResponse(userProfile));
         }
-        catch (Exception ex)
+        catch (TaskCanceledException)
         {
-            return Result<SeeProfileQueryResponse>.Failure(500, "InternalErrorServer", ex.Message);
+            return Result<SeeProfileQueryResponse>.Failure(499, "TaskCanceledException", "The operation was canceled before completion.");
         }
     }
     
@@ -40,9 +39,7 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
             Id = userP.Id,
             Username = userP.Username,
             Lastname = userP.Lastname,
-            Password = userP.Password,
             CreatedAt = userP.CreatedAt,
-            UpdateAt = userP.UpdateAt,
             Posted = userP.Posted?.Select(post => new PostDTO
             {
                 Id = post.Id,

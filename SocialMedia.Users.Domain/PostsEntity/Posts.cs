@@ -1,4 +1,4 @@
-namespace SocialMedia.Users.Domain.Entities.UserEntity;
+namespace SocialMedia.Users.Domain.PostsEntity;
 public class Posts
 {
     public Guid Id { get; set; }

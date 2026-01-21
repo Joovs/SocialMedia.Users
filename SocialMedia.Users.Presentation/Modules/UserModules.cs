@@ -43,11 +43,12 @@ public static class UserModules
 
     private static async Task<IResult> SeeProfile(
         [FromRoute] Guid userId,
-        ISender sender
+        ISender sender,
+        CancellationToken cancellationToken
         )
     {
         SeeProfileQuery query = new SeeProfileQuery(userId);
-        Result<SeeProfileQueryResponse> result = await sender.Send(query);
+        Result<SeeProfileQueryResponse> result = await sender.Send(query, cancellationToken);
 
         if (!result.IsSuccess)
         {
