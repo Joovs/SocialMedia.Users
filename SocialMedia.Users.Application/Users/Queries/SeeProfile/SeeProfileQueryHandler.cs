@@ -13,7 +13,7 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
     {
         if (request is null || request.userId == Guid.Empty)
         {
-            return Result<SeeProfileQueryResponse>.Failure(400, "Bad Request", "Invalid Data");
+            return Result<SeeProfileQueryResponse>.Failure(400, "BadRequest", "Invalid Data");
         }
         try
         {
@@ -28,7 +28,7 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
         }
         catch (TaskCanceledException)
         {
-            return Result<SeeProfileQueryResponse>.Failure(499, "TaskCanceledException", "The operation was canceled before completion.");
+            return Result<SeeProfileQueryResponse>.Failure(500, "TaskCanceledException", "The operation was canceled before completion.");
         }
     }
     

@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Users.Queries.SeeProfile;
@@ -24,5 +24,22 @@ public class SeeProfileQueryHandlerTest
 
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
+    }
+
+    [Fact]
+    public async Task seeProfileQueryHandler_Bad_Request()
+    {
+        UserProfile userProfile = new();
+        SeeProfileQueryResponse seeProfileQueryResponse = new();
+        _mockIUserRepository.Setup(x => x.SeeProfile(Guid.Empty, _cancellationToken)).ReturnsAsync(userProfile);
+
+        var query = new SeeProfileQuery(Guid.Empty);
+        var queryHandler = new SeeProfileQueryHandler(_mockIUserRepository.Object);
+        var result = await queryHandler.Handle(query, _cancellationToken);
+
+        // Assert
+        Assert.Equal(400, result.StatusCode);
+        Assert.Equal("BadRequest", result.Error?.ErrorCode);
+        Assert.True(!result.IsSuccess);
     }
 }
