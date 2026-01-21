@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Moq;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Users.Queries.SeeProfile;
 using SocialMedia.Users.Domain.Entities;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 
 namespace SocialMedia.Users.Test.SeeProfileTests;
 public class SeeProfileQueryHandlerTest
