@@ -1,7 +1,7 @@
 ﻿using SocialMedia.Users.Application.Common.Validations;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Domain.Entities.UserEntity;
 using SocialMedia.Users.Domain.Entities.UserEntity.Models.UpdateProfile;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Domain.Exceptions;
 using System.Linq;
 
@@ -83,12 +83,7 @@ public class UserMockRepository : IUserRepository
         {
             throw new ArgumentException("Invalid password");
         }
-        User? user = _database.FirstOrDefault(u => u.Id == request.Id);
-
-        if (user is null)
-        {
-            throw new KeyNotFoundException("User not found");
-        }
+        User? user = _database.First(u => u.Id == request.Id);
 
         bool exists = _database.Any(u =>
             u.Email == request.Email && u.Id != request.Id);
@@ -120,5 +115,17 @@ public class UserMockRepository : IUserRepository
 
         return Task.FromResult(response);
         
+    }
+
+    public Task<bool> UserExists(Guid id, CancellationToken cancellationToken)
+    {
+        User? user = _database.FirstOrDefault(u => u.Id == id);
+
+        if (user is null)
+        {
+            return Task.FromResult(false);
+        }
+
+        return Task.FromResult(true);
     }
 }

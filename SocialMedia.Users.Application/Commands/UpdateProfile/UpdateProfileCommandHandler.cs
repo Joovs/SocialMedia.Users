@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using SocialMedia.Users.Application.Common.Validations;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Domain.Entities.UserEntity.Models.UpdateProfile;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Domain.Exceptions;
 using SocialMedia.Users.Domain.Services.Hasher;
 using System.Text.RegularExpressions;
@@ -62,6 +62,13 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
                 return Result<UpdateProfileCommandResponse>.Failure(400, "Invalid password", "The password must be at least 8 characters long, and include one lowercase letter, one uppercase letter, one number, and one special character.");
             }
 
+            bool userExists = await _userRepository.UserExists(request.request.Id, cancellationToken);
+
+            if (!userExists)
+            {
+                return Result<UpdateProfileCommandResponse>.Failure(400, "ArgumentExeption", "InvalidID");
+            }
+
             string passwordHashed = _hasher.hashPassword(request.request.Password);
 
             UpdateProfileModel model = new UpdateProfileModel
@@ -84,10 +91,6 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
             };
 
             return Result<UpdateProfileCommandResponse>.Success(profileUpdated);
-        }
-        catch (UserNotFoundException ex)
-        {
-            return Result<UpdateProfileCommandResponse>.Failure(400, "InvalidID", ex.Message);
         }
         catch (DuplicateEmailException ex)
         {

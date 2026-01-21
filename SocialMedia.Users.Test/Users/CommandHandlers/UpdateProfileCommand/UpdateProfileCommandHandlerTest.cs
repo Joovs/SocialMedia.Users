@@ -29,6 +29,11 @@ public class UpdateProfileCommandHandlerTest
         };
 
         //Act
+        bool exists = await _repository.UserExists(model.Id, cancellationToken);
+        if(!exists)
+            {
+                Console.WriteLine("User not exists");
+            }
         UpdateProfileResponseModel response = await _repository.UpdateProfile(model, cancellationToken);
 
 
@@ -40,7 +45,7 @@ public class UpdateProfileCommandHandlerTest
 
     
     [Fact]
-    public async Task handleShouldReturnKeyNotFoundException()
+    public async Task handleShouldReturnUserExistsFalse()
     {
         //Arrange 
         UpdateProfileModel model = new UpdateProfileModel
@@ -54,12 +59,17 @@ public class UpdateProfileCommandHandlerTest
         };
 
         //Act
+        bool exists = await _repository.UserExists(model.Id, cancellationToken);
+        if(!(exists))
+        {
+            Console.WriteLine("User not exists");
+        }
         Func<Task> act = () => 
         _repository.UpdateProfile(model, cancellationToken);
 
 
         //Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(act);
+        Assert.False(exists);
     }
 
     
@@ -78,12 +88,18 @@ public class UpdateProfileCommandHandlerTest
         };
 
         //Act
+        bool exists = await _repository.UserExists(model.Id, cancellationToken);
+        if (!(exists))
+        {
+            Console.WriteLine("User not exists");
+        }
         Func<Task> act = () =>
         _repository.UpdateProfile(model, cancellationToken);
 
 
         //Assert
         await Assert.ThrowsAsync<ArgumentException>(act);
+        Assert.False(exists);
     }
 
     [Fact]

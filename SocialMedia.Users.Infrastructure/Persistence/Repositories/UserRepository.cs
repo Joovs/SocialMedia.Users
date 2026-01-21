@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Domain.Entities.UserEntity;
 using SocialMedia.Users.Domain.Entities.UserEntity.Models.UpdateProfile;
-using SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 using SocialMedia.Users.Domain.Exceptions;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
 
@@ -15,15 +15,14 @@ public class UserRepository : IUserRepository
     {
         _context = context;
     }
+    public async Task<bool> UserExists(Guid id, CancellationToken cancellationToken)
+    {
+        return await _context.Users.AsNoTracking().AnyAsync(u => u.Id == id);
+    }
 
     public async Task<UpdateProfileResponseModel> UpdateProfile(UpdateProfileModel request, CancellationToken cancellationToken)
     {
-        User? user = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-
-        if (user == null)
-        {
-            throw new UserNotFoundException(); 
-        }
+        User user = await _context.Users.FirstAsync(x => x.Id == request.Id, cancellationToken);
 
         bool exists = await _context.Users
         .AnyAsync(u => u.Email == request.Email && u.Id != request.Id, cancellationToken);
