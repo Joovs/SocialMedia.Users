@@ -1,9 +1,9 @@
 ﻿using SocialMedia.Users.Domain.Entities.FollowsEntity.Models.SeeFollowers;
-using SocialMedia.Users.Domain.Entities.FollowsEntity.Repositories;
+using SocialMedia.Users.Application.Repositories;
 
 namespace SocialMedia.Users.Test.Follows.Mocks;
 
-public class FollowMockRepository : IFollowRepository
+public class FollowMockRepository : IFollowRepository, IUserRepository
 {
     private readonly List<Guid> _database = new()
     {

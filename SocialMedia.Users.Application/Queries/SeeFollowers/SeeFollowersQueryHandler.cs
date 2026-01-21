@@ -1,17 +1,19 @@
 ﻿using SocialMedia.Users.Application.Abstractions.Messaging.Query;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Domain.Entities.FollowsEntity.Models.SeeFollowers;
-using SocialMedia.Users.Domain.Entities.FollowsEntity.Repositories;
 
 namespace SocialMedia.Users.Application.Queries.SeeFollowers;
 
 public class SeeFollowersQueryHandler : IQueryHandler<SeeFollowersQuery, SeeFollowersQueryResponse>
 {
-    private readonly IFollowRepository _repository;
+    private readonly IFollowRepository _followRepository;
+    private readonly IUserRepository _userRepository;
 
-    public SeeFollowersQueryHandler(IFollowRepository repository)
+    public SeeFollowersQueryHandler(IFollowRepository repository, IUserRepository userRepository)
     {
-        _repository = repository;
+        _followRepository = repository;
+        _userRepository = userRepository;
     }
     public async Task<Result<SeeFollowersQueryResponse>> Handle(SeeFollowersQuery request, CancellationToken cancellationToken)
     {
@@ -27,14 +29,14 @@ public class SeeFollowersQueryHandler : IQueryHandler<SeeFollowersQuery, SeeFoll
                 return Result<SeeFollowersQueryResponse>.Failure(400, "AgrgumentException", "Empty User Id");
             }
 
-            bool userExists = await _repository.UserExists(request.userId, cancellationToken);
+            bool userExists = await _userRepository.UserExists(request.userId, cancellationToken);
 
             if(!userExists)
             {
                 return Result<SeeFollowersQueryResponse>.Failure(400, "ArgumentExeption", "InvalidID");
             }
 
-            List<Follower> followers = await _repository.SeeFollowers(request.userId, cancellationToken);
+            List<Follower> followers = await _followRepository .SeeFollowers(request.userId, cancellationToken);
 
             SeeFollowersQueryResponse response = new SeeFollowersQueryResponse
             {

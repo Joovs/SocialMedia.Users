@@ -1,7 +1,7 @@
 ﻿using Azure.Core;
 using Microsoft.EntityFrameworkCore;
+using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Domain.Entities.FollowsEntity.Models.SeeFollowers;
-using SocialMedia.Users.Domain.Entities.FollowsEntity.Repositories;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
 
 namespace SocialMedia.Users.Infrastructure.Persistence.Repositories;
