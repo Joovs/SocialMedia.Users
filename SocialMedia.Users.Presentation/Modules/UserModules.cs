@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SocialMedia.Users.Application.Commands.Example;
 using SocialMedia.Users.Application.Shared;
+using SocialMedia.Users.Application.Users.Queries.SeeProfile;
 
 namespace SocialMedia.Users.Presentation.Modules;
 
@@ -16,10 +17,11 @@ public static class UserModules
         var userGroup = app.MapGroup(BASE_URL);
 
         userGroup.MapPut("example/{userId}", ExampleUsers);
+        userGroup.MapGet("User/{userId}", SeeProfile);
     }
 
     private static async Task<IResult> ExampleUsers(
-        [FromRoute] int userID,
+        [FromRoute] Guid userID,
         ISender sender,
         CancellationToken cancellationToken
         )
@@ -37,5 +39,26 @@ public static class UserModules
         }
 
         return Results.Created($"{BASE_URL}{result.Value.UserId}", result.Value);
+    }
+
+    private static async Task<IResult> SeeProfile(
+        [FromRoute] Guid userId,
+        ISender sender,
+        CancellationToken cancellationToken
+        )
+    {
+        SeeProfileQuery query = new SeeProfileQuery(userId);
+        Result<SeeProfileQueryResponse> result = await sender.Send(query, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return Results.Problem(
+                detail: result.Error?.ErrorMessage ?? result.Message,
+                statusCode: result.StatusCode ?? 400,
+                title: result.Error?.ErrorCode
+            );
+        }
+
+        return Results.Created($"{BASE_URL}{result.Value.Id}", result.Value);
     }
 }
