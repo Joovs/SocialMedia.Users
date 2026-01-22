@@ -10,13 +10,13 @@ namespace SocialMedia.Users.Presentation.Modules;
 
 public static class FollowModules
 {
-    private const string BASE_URL = "api/v1/follows/";
+    private const string BASE_URL = "api/v1/users/";
 
     public static void AddFollowModules(this IEndpointRouteBuilder app)
     {
         RouteGroupBuilder followGroup = app.MapGroup(BASE_URL);
 
-        followGroup.MapGet("followers/{userID}", SeeFollowers);
+        followGroup.MapGet("{userID}/followers", SeeFollowers);
     }
 
     private static async Task<IResult> SeeFollowers(
@@ -37,6 +37,6 @@ public static class FollowModules
             );
         }
 
-        return Results.Created($"{BASE_URL}{result.Value.UserId}", result.Value);
+        return Results.Ok(result.Value);
     }
 }

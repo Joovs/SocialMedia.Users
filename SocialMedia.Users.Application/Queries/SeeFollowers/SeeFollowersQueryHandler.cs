@@ -33,7 +33,7 @@ public class SeeFollowersQueryHandler : IQueryHandler<SeeFollowersQuery, SeeFoll
 
             if(!userExists)
             {
-                return Result<SeeFollowersQueryResponse>.Failure(400, "ArgumentExeption", "InvalidID");
+                return Result<SeeFollowersQueryResponse>.Failure(404, "UserNotFound", "The user with that ID does not exist");
             }
 
             List<Follower> followers = await _followRepository .SeeFollowers(request.userId, cancellationToken);
