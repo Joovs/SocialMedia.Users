@@ -14,7 +14,7 @@ public static class FollowModules
 
     public static void AddFollowModules(this IEndpointRouteBuilder app)
     {
-        var followGroup = app.MapGroup(BASE_URL);
+        RouteGroupBuilder followGroup = app.MapGroup(BASE_URL);
 
         followGroup.MapGet("followers/{userID}", SeeFollowers);
     }
