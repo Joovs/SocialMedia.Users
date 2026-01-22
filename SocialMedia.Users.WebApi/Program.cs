@@ -1,14 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Application;
-using SocialMedia.Users.Application.Repositories;
 using SocialMedia.Users.Application.Users.Commands.UserLogin;
-using SocialMedia.Users.Domain.Services.JwtServices;
-using SocialMedia.Users.Domain.Services.PasswordHashes;
 using SocialMedia.Users.Infrastructure;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
-using SocialMedia.Users.Infrastructure.Persistence.Repositories;
-using SocialMedia.Users.Infrastructure.Services;
-using SocialMedia.Users.Infrastructure.Services.PasswordHasher;
 using SocialMedia.Users.Presentation.Middleware;
 using SocialMedia.Users.Presentation.Modules;
 
@@ -17,13 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
