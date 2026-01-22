@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using SocialMedia.Users.Application.Queries.GetUserFollowing;
+using SocialMedia.Users.Application.Shared;
 
 namespace SocialMedia.Users.Presentation.Modules;
 
 public static class UserFollowingModule
 {
-    private const string BASE_URL = "user";
+    private const string BASE_URL = "api/v1/users/";
 
     public static void AddUserFollowingModule(this IEndpointRouteBuilder app)
     {
@@ -26,8 +27,8 @@ public static class UserFollowingModule
         if (userId == Guid.Empty)
             return Results.BadRequest("UserId is required");
 
-        var query = new GetUserFollowingQuery(userId);
-        var result = await sender.Send(query, cancellationToken);
+        GetUserFollowingQuery query = new(userId);
+        Result<GetUserFollowingResponse> result = await sender.Send(query, cancellationToken);
 
         if (!result.IsSuccess)
         {

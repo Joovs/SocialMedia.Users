@@ -4,5 +4,5 @@ namespace SocialMedia.Users.Application.Queries.GetUserFollowing;
 
 public class GetUserFollowingResponse
 {
-    public List<GetUserFollowingQueryRequest> Following { get; set; } = new();
+    public List<UserFollowingDto> Following { get; set; } = new();
 }

@@ -6,5 +6,5 @@ public interface IUserRepository
 {
 
     public Task<User> ExampleUpdateUser(Guid id, CancellationToken cancellationToken);
-    Task<bool> ExistsAsync(Guid userId);
+    Task<bool> ExistsAsync(Guid userId, CancellationToken cancellationToken);
 }

@@ -28,7 +28,7 @@ public class GetUserFollowingQueryHandler
             );
         }
 
-        if (!await _userRepository.ExistsAsync(query.UserId))
+        if (!await _userRepository.ExistsAsync(query.UserId, cancellationToken))
         {
             return Result<GetUserFollowingResponse>.Failure(
                 new Error("USER_NOT_FOUND", "User does not exist")

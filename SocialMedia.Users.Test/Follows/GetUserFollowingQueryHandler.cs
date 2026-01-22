@@ -27,7 +27,7 @@ public class GetUserFollowingQueryHandlerTest
         var userId = Guid.NewGuid();
 
         _userRepository
-            .Setup(x => x.ExistsAsync(userId))
+            .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         var query = new GetUserFollowingQuery(userId);
@@ -62,12 +62,12 @@ public class GetUserFollowingQueryHandlerTest
         var userId = Guid.NewGuid();
 
         _userRepository
-            .Setup(x => x.ExistsAsync(userId))
+            .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _followRepository
             .Setup(x => x.GetFollowingAsync(userId))
-            .ReturnsAsync(new List<GetUserFollowingQueryRequest>());
+            .ReturnsAsync(new List<UserFollowingDto>());
 
         var query = new GetUserFollowingQuery(userId);
 
@@ -87,12 +87,12 @@ public class GetUserFollowingQueryHandlerTest
         var userId = Guid.NewGuid();
 
         _userRepository
-            .Setup(x => x.ExistsAsync(userId))
+            .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _followRepository
             .Setup(x => x.GetFollowingAsync(userId))
-            .ReturnsAsync(new List<GetUserFollowingQueryRequest>
+            .ReturnsAsync(new List<UserFollowingDto>
             {
             new() { UserId = Guid.NewGuid(), Username = "alice" },
             new() { UserId = Guid.NewGuid(), Username = "bob" }

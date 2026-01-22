@@ -6,10 +6,12 @@ namespace SocialMedia.Users.Infrastructure.InjectionManagers;
 
 public static class RepositoriesManager
 {
-    public static void AddRepositories(IServiceCollection services)
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFollowRepository, FollowRepository>();
+
+        return services;
     }
 }
 

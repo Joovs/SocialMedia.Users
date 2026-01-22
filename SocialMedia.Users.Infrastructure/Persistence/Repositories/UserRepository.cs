@@ -43,9 +43,9 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         }
     }
 
-    public async Task<bool> ExistsAsync(Guid userId)
+    public async Task<bool> ExistsAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await _context.Users
-            .AnyAsync(u => u.Id == userId);
+            .AnyAsync(u => u.Id == userId, cancellationToken);
     }
 }

@@ -14,7 +14,7 @@ public class FollowRepository : IFollowRepository
         _context = context;
     }
 
-    public async Task<List<GetUserFollowingQueryRequest>> GetFollowingAsync(Guid userId)
+    public async Task<List<UserFollowingDto>> GetFollowingAsync(Guid userId)
     {
         return await _context.Follows
             .Where(f => f.FollowerId == userId)
@@ -22,7 +22,7 @@ public class FollowRepository : IFollowRepository
                 _context.Users,
                 f => f.FollowingId,
                 u => u.Id,
-                (f, u) => new GetUserFollowingQueryRequest
+                (f, u) => new UserFollowingDto
                 {
                     UserId = u.Id,
                     Username = u.Username
