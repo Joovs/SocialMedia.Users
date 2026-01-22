@@ -21,4 +21,13 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         return await base.SaveChangesAsync(cancellationToken);
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Configurar la clave primaria compuesta para Follow
+        modelBuilder.Entity<Follow>()
+            .HasKey(f => new { f.FollowerUserId, f.FollowingUserId });
+    }
 }
