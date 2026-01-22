@@ -30,6 +30,10 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
         {
             return Result<SeeProfileQueryResponse>.Failure(500, "TaskCanceledException", "The operation was canceled before completion.");
         }
+        catch (Exception ex)
+        {
+            throw new Exception($"Data could not be fetch: {ex.Message}");
+        }
     }
     
      private static SeeProfileQueryResponse InstantiateSeeProfileResponse(UserProfile userP)
