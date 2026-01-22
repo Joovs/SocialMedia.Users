@@ -66,7 +66,7 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
 
             if (!userExists)
             {
-                return Result<UpdateProfileCommandResponse>.Failure(400, "ArgumentExeption", "InvalidID");
+                return Result<UpdateProfileCommandResponse>.Failure(404, "UserNotFound", "The user with that ID does not exist.");
             }
 
             string passwordHashed = _hasher.hashPassword(request.request.Password);
