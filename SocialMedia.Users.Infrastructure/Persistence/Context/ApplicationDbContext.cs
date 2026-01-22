@@ -17,5 +17,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     // Tabla para seguir usuarios
     public virtual DbSet<Follow> Follows { get; set; }
 
-
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 }

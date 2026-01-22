@@ -1,4 +1,4 @@
-using SocialMedia.Users.Domain.Entities;
+
 
 namespace SocialMedia.Users.Application.Commands.Follow
 {

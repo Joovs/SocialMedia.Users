@@ -17,10 +17,9 @@ builder.Services.AddInfrastructure();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    string connectionString = builder.Configuration.GetConnectionString("TestDataBase");
-    options.UseSqlServer(connectionString);
+    string? connectionString = builder.Configuration.GetConnectionString("TestDataBase");
+    options.UseSqlServer(connectionString ?? "");
 });
-builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
 var app = builder.Build();
 

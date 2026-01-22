@@ -1,14 +1,17 @@
 using SocialMedia.Users.Domain.Entities;
 using SocialMedia.Users.Application.Abstractions;
+using System;
+using System.Threading.Tasks;
+
 namespace SocialMedia.Users.Application.Commands.Follow
 {
     public class FollowUserCommandHandler
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public FollowUserCommandHandler(IApplicationDbContext context)
+        public FollowUserCommandHandler(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<FollowCommandResponse> Handle(FollowUserCommand command)
@@ -16,7 +19,7 @@ namespace SocialMedia.Users.Application.Commands.Follow
             if (command.FollowerUserId == command.FollowingUserId)
                 throw new ArgumentException("No puedes seguirte a ti mismo");
 
-            var follow = await _context.Follows.FindAsync(
+            var follow = await _unitOfWork.Follows.FindAsync(
                 command.FollowerUserId,
                 command.FollowingUserId);
 
@@ -31,14 +34,15 @@ namespace SocialMedia.Users.Application.Commands.Follow
                     FollowingUserId = command.FollowingUserId,
                     IsActive = true
                 };
-                _context.Follows.Add(follow);
+                await _unitOfWork.Follows.AddAsync(follow);
             }
             else
             {
                 follow.IsActive = true;
+                _unitOfWork.Follows.Update(follow);
             }
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return new FollowCommandResponse
             {

@@ -1,20 +1,22 @@
 using SocialMedia.Users.Domain.Entities;
 using SocialMedia.Users.Application.Abstractions;
+using System;
+using System.Threading.Tasks;
 
 namespace SocialMedia.Users.Application.Commands.Follow
 {
     public class UnfollowUserCommandHandler
     {
-       private readonly IApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UnfollowUserCommandHandler(IApplicationDbContext context)
+        public UnfollowUserCommandHandler(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<FollowCommandResponse> Handle(UnfollowUserCommand command)
         {
-            var follow = await _context.Follows.FindAsync(
+            var follow = await _unitOfWork.Follows.FindAsync(
                 command.FollowerUserId,
                 command.FollowingUserId);
 
@@ -22,7 +24,8 @@ namespace SocialMedia.Users.Application.Commands.Follow
                 throw new ArgumentException("No sigues a este usuario");
 
             follow.IsActive = false;
-            await _context.SaveChangesAsync();
+            _unitOfWork.Follows.Update(follow);
+            await _unitOfWork.SaveChangesAsync();
 
             return new FollowCommandResponse
             {
@@ -30,6 +33,6 @@ namespace SocialMedia.Users.Application.Commands.Follow
                 FollowingUserId = follow.FollowingUserId,
                 Status = "Unfollowed"
             };  
+        }
     }
-    }   
 }
