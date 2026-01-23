@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Domain.Entities.UserEntity;
+using SocialMedia.Users.Domain.Entities;
+using SocialMedia.Users.Application.Abstractions;
 
 namespace SocialMedia.Users.Infrastructure.Persistence.Context;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -12,5 +14,20 @@ public class ApplicationDbContext : DbContext
     // DbSets (referenciando a las tablas de la base de datos)
     public virtual DbSet<User> Users { get; set; }
 
+    // Tabla para seguir usuarios
+    public virtual DbSet<Follow> Follows { get; set; }
 
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Configurar la clave primaria compuesta para Follow
+        modelBuilder.Entity<Follow>()
+            .HasKey(f => new { f.FollowerUserId, f.FollowingUserId });
+    }
 }

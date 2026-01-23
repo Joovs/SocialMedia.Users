@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Application;
 using SocialMedia.Users.Infrastructure;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
+using SocialMedia.Users.Application.Abstractions;
 using SocialMedia.Users.Presentation.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,10 +17,9 @@ builder.Services.AddInfrastructure();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    string connectionString = builder.Configuration.GetConnectionString("TestDataBase");
-    options.UseSqlServer(connectionString);
+    string? connectionString = builder.Configuration.GetConnectionString("TestDataBase");
+    options.UseSqlServer(connectionString ?? "");
 });
-builder.Services.AddScoped<ApplicationDbContext>();
 
 var app = builder.Build();
 
