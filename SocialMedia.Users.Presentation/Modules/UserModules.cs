@@ -19,7 +19,7 @@ public static class UserModules
     }
 
     private static async Task<IResult> ExampleUsers(
-        [FromRoute] int userID,
+        [FromRoute] Guid userID,
         ISender sender,
         CancellationToken cancellationToken
         )
