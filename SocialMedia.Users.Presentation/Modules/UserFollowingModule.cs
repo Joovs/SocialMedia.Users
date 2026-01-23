@@ -14,7 +14,7 @@ public static class UserFollowingModule
 
     public static void AddUserFollowingModule(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup(BASE_URL);
+        RouteGroupBuilder group = app.MapGroup(BASE_URL);
 
         group.MapGet("{userId:guid}/following", GetUserFollowing);
     }
@@ -28,7 +28,7 @@ public static class UserFollowingModule
             return Results.BadRequest("UserId is required");
 
         GetUserFollowingQuery query = new(userId);
-        Result<GetUserFollowingResponse> result = await sender.Send(query, cancellationToken);
+        Result<GetUserFollowingQueryResponse> result = await sender.Send(query, cancellationToken);
 
         if (!result.IsSuccess)
         {

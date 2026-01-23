@@ -2,6 +2,7 @@
 using Moq;
 using SocialMedia.Users.Application.Queries.GetUserFollowing;
 using SocialMedia.Users.Application.Repositories;
+using SocialMedia.Users.Domain.Entities.FollowEntity;
 
 public class GetUserFollowingQueryHandlerTest
 {
@@ -66,8 +67,8 @@ public class GetUserFollowingQueryHandlerTest
             .ReturnsAsync(true);
 
         _followRepository
-            .Setup(x => x.GetFollowingAsync(userId))
-            .ReturnsAsync(new List<UserFollowingDto>());
+            .Setup(x => x.GetFollowingAsync(userId, CancellationToken.None))
+            .ReturnsAsync(new List<UserFollow>());
 
         var query = new GetUserFollowingQuery(userId);
 
@@ -91,8 +92,8 @@ public class GetUserFollowingQueryHandlerTest
             .ReturnsAsync(true);
 
         _followRepository
-            .Setup(x => x.GetFollowingAsync(userId))
-            .ReturnsAsync(new List<UserFollowingDto>
+            .Setup(x => x.GetFollowingAsync(userId, CancellationToken.None))
+            .ReturnsAsync(new List<UserFollow>
             {
             new() { UserId = Guid.NewGuid(), Username = "alice" },
             new() { UserId = Guid.NewGuid(), Username = "bob" }

@@ -1,8 +1,9 @@
 ﻿using SocialMedia.Users.Application.Queries.GetUserFollowing;
+using SocialMedia.Users.Domain.Entities.FollowEntity;
 
 namespace SocialMedia.Users.Application.Queries.GetUserFollowing;
 
-public class GetUserFollowingResponse
+public class GetUserFollowingQueryResponse
 {
-    public List<UserFollowingDto> Following { get; set; } = new();
+    public List<UserFollow> Following { get; set; } = new();
 }
