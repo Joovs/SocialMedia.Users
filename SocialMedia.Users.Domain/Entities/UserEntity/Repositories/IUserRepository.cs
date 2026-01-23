@@ -1,6 +1,10 @@
-﻿namespace SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace SocialMedia.Users.Domain.Entities.UserEntity.Repositories;
 
 public interface IUserRepository
 {
-    public Task<User> ExampleUpdateUser (int id, CancellationToken cancellationToken);
+    Task<User> CreateUserAsync(User user, CancellationToken cancellationToken);
 }

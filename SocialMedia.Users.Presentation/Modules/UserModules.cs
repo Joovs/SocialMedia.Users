@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using SocialMedia.Users.Application.Commands.Example;
+using SocialMedia.Users.Application.Commands.Users.Create;
 using SocialMedia.Users.Application.Shared;
+using SocialMedia.Users.Presentation.Contracts.Users;
 
 namespace SocialMedia.Users.Presentation.Modules;
 
@@ -15,17 +16,21 @@ public static class UserModules
     {
         var userGroup = app.MapGroup(BASE_URL);
 
-        userGroup.MapPut("example/{userId}", ExampleUsers);
+        userGroup.MapPost(string.Empty, CreateUser)
+                 .WithName("CreateUser")
+                 .WithTags("Users")
+                 .Produces<CreateUserCommandResponse>(StatusCodes.Status201Created)
+                 .ProducesProblem(StatusCodes.Status400BadRequest)
+                 .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 
-    private static async Task<IResult> ExampleUsers(
-        [FromRoute] int userID,
+    private static async Task<IResult> CreateUser(
+        [FromBody] CreateUserRequest request,
         ISender sender,
-        CancellationToken cancellationToken
-        )
+        CancellationToken cancellationToken)
     {
-        ExampleCommand command = new ExampleCommand(userID);
-        Result<ExampleCommandResponse> result = await sender.Send(command, cancellationToken);
+        CreateUserCommand command = new CreateUserCommand(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
+        Result<CreateUserCommandResponse> result = await sender.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -36,6 +41,15 @@ public static class UserModules
             );
         }
 
-        return Results.Created($"{BASE_URL}{result.Value.UserId}", result.Value);
+        if (result.Value is null)
+        {
+            return Results.Problem(
+                detail: "The user was created but the payload could not be generated.",
+                statusCode: 500,
+                title: "UserPayloadMissing"
+            );
+        }
+
+        return Results.Created($"{BASE_URL}{result.Value.Id}", result.Value);
     }
 }
