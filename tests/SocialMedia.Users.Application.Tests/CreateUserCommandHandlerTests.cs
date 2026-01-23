@@ -14,15 +14,18 @@ public class CreateUserCommandHandlerTests
     private readonly Mock<IPasswordHashingService> _passwordHashingServiceMock = new();
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock = new();
     private readonly Mock<ILogger<CreateUserCommandHandler>> _loggerMock = new();
+    private readonly ICreateUserCommandValidator _validator = new CreateUserCommandValidator();
+    private readonly IUserFactory _userFactory;
     private readonly CreateUserCommandHandler _handler;
 
     public CreateUserCommandHandlerTests()
     {
         _dateTimeProviderMock.Setup(p => p.GetLocalTime()).Returns(new DateTime(2025, 1, 14, 10, 0, 0));
+        _userFactory = new UserFactory(_passwordHashingServiceMock.Object, _dateTimeProviderMock.Object);
         _handler = new CreateUserCommandHandler(
             _repositoryMock.Object,
-            _passwordHashingServiceMock.Object,
-            _dateTimeProviderMock.Object,
+            _validator,
+            _userFactory,
             _loggerMock.Object);
     }
 

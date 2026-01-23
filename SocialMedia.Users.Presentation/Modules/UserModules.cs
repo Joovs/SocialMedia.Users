@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +6,6 @@ using Microsoft.AspNetCore.Routing;
 using SocialMedia.Users.Application.Commands.Users.Create;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Presentation.Contracts.Users;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace SocialMedia.Users.Presentation.Modules;
 
@@ -23,7 +20,6 @@ public static class UserModules
                  .WithName("CreateUser")
                  .WithTags("Users")
                  .Produces<CreateUserCommandResponse>(StatusCodes.Status201Created)
-                 .ProducesValidationProblem()
                  .ProducesProblem(StatusCodes.Status400BadRequest)
                  .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
@@ -33,12 +29,6 @@ public static class UserModules
         ISender sender,
         CancellationToken cancellationToken)
     {
-        IResult? validationResult = ValidateRequest(request);
-        if (validationResult is not null)
-        {
-            return validationResult;
-        }
-
         CreateUserCommand command = new CreateUserCommand(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
         Result<CreateUserCommandResponse> result = await sender.Send(command, cancellationToken);
 
@@ -61,26 +51,5 @@ public static class UserModules
         }
 
         return Results.Created($"{BASE_URL}{result.Value.Id}", result.Value);
-    }
-
-    private static IResult? ValidateRequest(CreateUserRequest request)
-    {
-        List<ValidationResult> validationResults = new();
-        ValidationContext validationContext = new ValidationContext(request);
-        bool isValid = Validator.TryValidateObject(request, validationContext, validationResults, true);
-
-        if (isValid)
-        {
-            return null;
-        }
-
-        Dictionary<string, string[]> errors = validationResults
-            .GroupBy(r => r.MemberNames.FirstOrDefault() ?? string.Empty)
-            .ToDictionary(
-                g => string.IsNullOrEmpty(g.Key) ? "Request" : g.Key,
-                g => g.Select(r => r.ErrorMessage ?? "Invalid value.").ToArray()
-            );
-
-        return Results.ValidationProblem(errors);
     }
 }

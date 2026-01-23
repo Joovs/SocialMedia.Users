@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SocialMedia.Users.Application.Commands.Users.Create;
 using System.Reflection;
 
 namespace SocialMedia.Users.Application;
@@ -11,6 +12,8 @@ public static class DependencyInjection
         {
             config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
         });
+        services.AddScoped<ICreateUserCommandValidator, CreateUserCommandValidator>();
+        services.AddScoped<IUserFactory, UserFactory>();
 
         return services;
     }
