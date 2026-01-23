@@ -1,6 +1,6 @@
 using Moq;
 using SocialMedia.Users.Application.Abstractions;
-using SocialMedia.Users.Application.Commands.Follow;
+using SocialMedia.Users.Application.Commands.Follow.FollowUserCommand;
 using SocialMedia.Users.Domain.Entities;
 
 namespace SocialMedia.Users.Test.Commands.Follow;
@@ -8,13 +8,13 @@ namespace SocialMedia.Users.Test.Commands.Follow;
 public class FollowUserCommandHandlerTests
 {
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<SocialMedia.Users.Domain.Entities.Follow>> _mockFollowRepository;
+    private readonly Mock<IRepository<Follow>> _mockFollowRepository;
     private readonly FollowUserCommandHandler _handler;
 
     public FollowUserCommandHandlerTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockFollowRepository = new Mock<IRepository<SocialMedia.Users.Domain.Entities.Follow>>();
+        _mockFollowRepository = new Mock<IRepository<Follow>>();
         
         _mockUnitOfWork.Setup(x => x.Follows).Returns(_mockFollowRepository.Object);
         
@@ -25,15 +25,15 @@ public class FollowUserCommandHandlerTests
     public async Task Handle_WithValidFollowRequest_ShouldCreateFollow()
     {
         // Arrange
-        var followerId = Guid.NewGuid();
-        var followingId = Guid.NewGuid();
-        var command = new FollowUserCommand { FollowerUserId = followerId, FollowingUserId = followingId };
+        Guid followerId = Guid.NewGuid();
+        Guid followingId = Guid.NewGuid();
+        FollowUserCommand command = new FollowUserCommand { FollowerUserId = followerId, FollowingUserId = followingId };
         
         _mockFollowRepository.Setup(x => x.FindAsync(followerId, followingId))
-            .ReturnsAsync((SocialMedia.Users.Domain.Entities.Follow?)null);
+            .ReturnsAsync((Follow?)null);
 
         // Act
-        var result = await _handler.Handle(command);
+        FollowCommandResponse result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -41,7 +41,7 @@ public class FollowUserCommandHandlerTests
         Assert.Equal(followingId, result.FollowingUserId);
         Assert.Equal("Followed", result.Status);
         
-        _mockFollowRepository.Verify(x => x.AddAsync(It.IsAny<SocialMedia.Users.Domain.Entities.Follow>()), Times.Once);
+        _mockFollowRepository.Verify(x => x.AddAsync(It.IsAny<Follow>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -49,23 +49,23 @@ public class FollowUserCommandHandlerTests
     public async Task Handle_WithSelfFollow_ShouldThrowException()
     {
         // Arrange
-        var userId = Guid.NewGuid();
-        var command = new FollowUserCommand { FollowerUserId = userId, FollowingUserId = userId };
+        Guid userId = Guid.NewGuid();
+        FollowUserCommand command = new FollowUserCommand { FollowerUserId = userId, FollowingUserId = userId };
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ArgumentException>(() => _handler.Handle(command));
-        Assert.Equal("No puedes seguirte a ti mismo", exception.Message);
+        ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(() => _handler.Handle(command, CancellationToken.None));
+        Assert.Equal("You cannot follow yourself", exception.Message);
     }
 
     [Fact]
     public async Task Handle_WithAlreadyFollowing_ShouldThrowException()
     {
         // Arrange
-        var followerId = Guid.NewGuid();
-        var followingId = Guid.NewGuid();
-        var command = new FollowUserCommand { FollowerUserId = followerId, FollowingUserId = followingId };
+        Guid followerId = Guid.NewGuid();
+        Guid followingId = Guid.NewGuid();
+        FollowUserCommand command = new FollowUserCommand { FollowerUserId = followerId, FollowingUserId = followingId };
         
-        var existingFollow = new SocialMedia.Users.Domain.Entities.Follow
+        Follow existingFollow = new Follow
         {
             FollowerUserId = followerId,
             FollowingUserId = followingId,
@@ -76,19 +76,19 @@ public class FollowUserCommandHandlerTests
             .ReturnsAsync(existingFollow);
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ArgumentException>(() => _handler.Handle(command));
-        Assert.Equal("Ya sigues a este usuario", exception.Message);
+        ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(() => _handler.Handle(command, CancellationToken.None));
+        Assert.Equal("You are already following this user", exception.Message);
     }
 
     [Fact]
     public async Task Handle_WithInactiveFollow_ShouldActivateFollow()
     {
         // Arrange
-        var followerId = Guid.NewGuid();
-        var followingId = Guid.NewGuid();
-        var command = new FollowUserCommand { FollowerUserId = followerId, FollowingUserId = followingId };
+        Guid followerId = Guid.NewGuid();
+        Guid followingId = Guid.NewGuid();
+        FollowUserCommand command = new FollowUserCommand { FollowerUserId = followerId, FollowingUserId = followingId };
         
-        var inactiveFollow = new SocialMedia.Users.Domain.Entities.Follow
+        Follow inactiveFollow = new Follow
         {
             FollowerUserId = followerId,
             FollowingUserId = followingId,
@@ -99,13 +99,14 @@ public class FollowUserCommandHandlerTests
             .ReturnsAsync(inactiveFollow);
 
         // Act
-        var result = await _handler.Handle(command);
+        FollowCommandResponse result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal("Followed", result.Status);
         
-        _mockFollowRepository.Verify(x => x.Update(It.IsAny<SocialMedia.Users.Domain.Entities.Follow>()), Times.Once);
+        _mockFollowRepository.Verify(x => x.Update(It.IsAny<Follow>()), Times.Once);
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }
+
