@@ -16,6 +16,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
+ValidateJwtSettings(builder.Configuration);
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     string connectionString = builder.Configuration.GetConnectionString("TestDataBase")
@@ -45,3 +47,17 @@ ModulesConfiguration.Configure(app);
 app.UseHttpsRedirection();
 
 app.Run();
+
+static void ValidateJwtSettings(IConfiguration configuration)
+{
+    var jwtSettings = configuration.GetSection("JwtSettings");
+
+    var secret = jwtSettings["Secrets"];
+    var issuer = jwtSettings["Issuer"];
+    var audience = jwtSettings["Audience"];
+
+    if (string.IsNullOrWhiteSpace(secret) || string.IsNullOrWhiteSpace(issuer) || string.IsNullOrWhiteSpace(audience))
+    {
+        throw new InvalidOperationException("JwtSettings are not configuration.Required: JwtSettings:Secret, JwtSettings:Issuer, JwtSettings:Audience");
+    }
+}

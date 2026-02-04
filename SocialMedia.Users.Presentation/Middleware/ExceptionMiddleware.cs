@@ -2,6 +2,8 @@ using SocialMedia.Users.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace SocialMedia.Users.Presentation.Middleware;
 
@@ -40,10 +42,10 @@ public class ExceptionMiddleware
 
     private static async Task WriteAsync(HttpContext ctx, HttpStatusCode code, string message)
     {
-        ctx.Response.ContentType = "application/json";
+        ctx.Response.ContentType = "application/problem+json";
         ctx.Response.StatusCode = (int)code;
 
-        var payload = new { status = (int)code, error = message };
+        var payload = new ProblemDetails{ Status = (int)code, Title = ReasonPhrases.GetReasonPhrase((int)code), Detail = message };
         await ctx.Response.WriteAsync(JsonSerializer.Serialize(payload));
     }
 }

@@ -34,7 +34,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<
         User user = await _userRepository.GetByEmailAsync(req.Email, cancellationToken);
 
         // 401 - Invalid credentials or user does not exist
-        if (user == null || user.Email != req.Email)
+        if (user == null || !string.Equals(user.Email, req.Email, StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidCredentialsException("Credenciales inválidas");
         }
