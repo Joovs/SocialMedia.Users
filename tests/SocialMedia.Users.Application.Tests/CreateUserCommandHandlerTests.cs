@@ -32,7 +32,8 @@ public class CreateUserCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldFail_WhenUsernameIsMissing()
     {
-        CreateUserCommand command = new CreateUserCommand(string.Empty, "John", "Doe", "john@example.com", "password123!");
+        var commandRequest = new CreateUserCommandRequest(string.Empty, "John", "Doe", "john@example.com", "password123!");
+        CreateUserCommand command = new CreateUserCommand(commandRequest);
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
@@ -45,8 +46,9 @@ public class CreateUserCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldCreateUser_WhenPayloadIsValid()
     {
-        CreateUserCommand command = new CreateUserCommand("  DemoUser  ", " John ", " Doe ", "TEST@MAIL.com", "password123!");
-        _passwordHashingServiceMock.Setup(p => p.Hash(command.Password)).Returns("hashed-value");
+        var commandRequest = new CreateUserCommandRequest("  DemoUser  ", " John ", " Doe ", "TEST@MAIL.com", "password123!");
+        CreateUserCommand command = new CreateUserCommand(commandRequest);
+        _passwordHashingServiceMock.Setup(p => p.Hash(command.Request.Password)).Returns("hashed-value");
 
         User? capturedUser = null;
         DateTime now = new DateTime(2025, 1, 14, 12, 0, 0);

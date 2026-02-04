@@ -46,7 +46,7 @@ public class CreateUserCommandHandler(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating user {Username}", request.Username);
+            _logger.LogError(ex, "Error creating user {Username}", request.Request.Username);
             return Result<CreateUserCommandResponse>.Failure(500, "CreateUserError", ex.Message);
         }
     }

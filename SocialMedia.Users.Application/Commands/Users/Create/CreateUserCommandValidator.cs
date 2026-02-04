@@ -7,33 +7,33 @@ public class CreateUserCommandValidator : ICreateUserCommandValidator
 {
     public Result<CreateUserCommandResponse>? Validate(CreateUserCommand command)
     {
-        if (string.IsNullOrWhiteSpace(command.Username))
+        if (string.IsNullOrWhiteSpace(command.Request.Username))
         {
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidUsername", "Username is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(command.FirstName))
+        if (string.IsNullOrWhiteSpace(command.Request.FirstName))
         {
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidFirstName", "FirstName is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(command.LastName))
+        if (string.IsNullOrWhiteSpace(command.Request.LastName))
         {
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidLastName", "LastName is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(command.Password))
+        if (string.IsNullOrWhiteSpace(command.Request.Password))
         {
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidPassword", "Password is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(command.Email))
+        if (string.IsNullOrWhiteSpace(command.Request.Email))
         {
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidEmail", "Email is required.");
         }
 
         EmailAddressAttribute emailValidator = new();
-        if (!emailValidator.IsValid(command.Email))
+        if (!emailValidator.IsValid(command.Request.Email))
         {
             return Result<CreateUserCommandResponse>.Failure(400, "InvalidEmailFormat", "Email format is not valid.");
         }

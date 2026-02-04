@@ -29,7 +29,13 @@ public static class UserModules
         ISender sender,
         CancellationToken cancellationToken)
     {
-        CreateUserCommand command = new CreateUserCommand(request.Username, request.FirstName, request.LastName, request.Email, request.Password);
+        var commandRequest = new CreateUserCommandRequest(
+            request.Username,
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.Password);
+        CreateUserCommand command = new CreateUserCommand(commandRequest);
         Result<CreateUserCommandResponse> result = await sender.Send(command, cancellationToken);
 
         if (!result.IsSuccess)

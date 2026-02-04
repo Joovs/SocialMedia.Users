@@ -12,11 +12,11 @@ public class UserFactory(
 
     public User CreateNew(CreateUserCommand command)
     {
-        string normalizedUsername = command.Username.Trim();
-        string normalizedFirstName = command.FirstName.Trim();
-        string normalizedLastName = command.LastName.Trim();
-        string normalizedEmail = command.Email.Trim().ToLowerInvariant();
-        string hashedPassword = _passwordHashingService.Hash(command.Password);
+        string normalizedUsername = command.Request.Username.Trim();
+        string normalizedFirstName = command.Request.FirstName.Trim();
+        string normalizedLastName = command.Request.LastName.Trim();
+        string normalizedEmail = command.Request.Email.Trim().ToLowerInvariant();
+        string hashedPassword = _passwordHashingService.Hash(command.Request.Password);
         DateTime localNow = _dateTimeProvider.GetLocalTime();
 
         return new User
