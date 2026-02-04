@@ -11,17 +11,10 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
 
     public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _context.Users.AddAsync(user, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+        await _context.Users.AddAsync(user, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            return user;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"User could not be created: {ex.Message}", ex);
-        }
+        return user;
     }
 
 }
