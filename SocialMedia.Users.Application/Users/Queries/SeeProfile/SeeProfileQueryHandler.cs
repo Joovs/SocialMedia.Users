@@ -21,7 +21,7 @@ public class SeeProfileQueryHandler(IUserRepository repository) : IRequestHandle
 
             if (userProfile is null)
             {
-                return Result<SeeProfileQueryResponse>.Failure(401, "Unauthorized", "Invalid Credentials");
+                return Result<SeeProfileQueryResponse>.Failure(404, "NotFound", "User Not Found");
             }
 
             return Result<SeeProfileQueryResponse>.Success(InstantiateSeeProfileResponse(userProfile));

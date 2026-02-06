@@ -17,7 +17,7 @@ public static class UserModules
         var userGroup = app.MapGroup(BASE_URL);
 
         userGroup.MapPut("example/{userId}", ExampleUsers);
-        userGroup.MapGet("User/{userId}", SeeProfile);
+        userGroup.MapGet("{userId}", SeeProfile);
     }
 
     private static async Task<IResult> ExampleUsers(
@@ -59,6 +59,6 @@ public static class UserModules
             );
         }
 
-        return Results.Created($"{BASE_URL}{result.Value.Id}", result.Value);
+        return Results.Ok(result.Value);
     }
 }
