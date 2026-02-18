@@ -50,7 +50,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<
         {
             UserId = user.Id,
             FirstName = user.FirstName,
-            LastName = user.Lastname,
+            LastName = user.LastName,
             Email = user.Email,
             Token = _jwtService.GenerateToken(user.Email, user.Id),
             Message = "Autenticación exitosa",

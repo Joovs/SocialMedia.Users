@@ -28,7 +28,7 @@ public class LoginUserHandlerTest
         {
             Id = Guid.NewGuid(),
             FirstName = "Robert",
-            Lastname = "Chan",
+            LastName = "Chan",
             Email = request.Email,
             Password = "hashed-password"
         };
