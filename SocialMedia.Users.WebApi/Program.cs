@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Application;
+using SocialMedia.Users.Application.Users.Commands.UserLogin;
 using SocialMedia.Users.Infrastructure;
 using SocialMedia.Users.Infrastructure.Persistence.Context;
+using SocialMedia.Users.Presentation.Middleware;
 using SocialMedia.Users.Presentation.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,12 +16,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
+ValidateJwtSettings(builder.Configuration);
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    string connectionString = builder.Configuration.GetConnectionString("TestDataBase");
+    string connectionString = builder.Configuration.GetConnectionString("TestDataBase")
+        ?? throw new InvalidOperationException("Connection string 'TestDataBase' not found.");
     options.UseSqlServer(connectionString);
 });
 builder.Services.AddScoped<ApplicationDbContext>();
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(LoginUserCommandHandler).Assembly));
 
 var app = builder.Build();
 
@@ -33,8 +40,24 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 ModulesConfiguration.Configure(app);
 
 app.UseHttpsRedirection();
 
 app.Run();
+
+static void ValidateJwtSettings(IConfiguration configuration)
+{
+    var jwtSettings = configuration.GetSection("JwtSettings");
+
+    var secret = jwtSettings["Secrets"];
+    var issuer = jwtSettings["Issuer"];
+    var audience = jwtSettings["Audience"];
+
+    if (string.IsNullOrWhiteSpace(secret) || string.IsNullOrWhiteSpace(issuer) || string.IsNullOrWhiteSpace(audience))
+    {
+        throw new InvalidOperationException("JwtSettings are not configuration.Required: JwtSettings:Secret, JwtSettings:Issuer, JwtSettings:Audience");
+    }
+}

@@ -1,6 +1,6 @@
-﻿namespace SocialMedia.Users.Domain.Entities.UserEntity;
+﻿namespace SocialMedia.Users.Domain.Entities.UserEntity.Models.UpdateProfile;
 
-public class User
+public class UpdateProfileModel
 {
     public Guid Id { get; set; }
     public string Username { get; set; } = string.Empty;
@@ -8,7 +8,4 @@ public class User
     public string LastName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdateAt { get; set; }
-
 }
