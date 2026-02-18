@@ -1,14 +1,11 @@
-﻿namespace SocialMedia.Users.Domain.Entities.UserEntity;
+﻿namespace SocialMedia.Users.Application.Commands.UpdateProfile;
 
-public class User
+public class UpdateProfileCommandRequest
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
     public string Username { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdateAt { get; set; }
-
 }

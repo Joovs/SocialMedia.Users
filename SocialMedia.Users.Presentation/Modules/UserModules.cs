@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Models;
-using SocialMedia.Users.Application.Commands.Example;
+using SocialMedia.Users.Application.Commands.UpdateProfile;
 using SocialMedia.Users.Application.Shared;
 using SocialMedia.Users.Application.Users.Commands.UserLogin;
 
@@ -18,7 +18,6 @@ public static class UserModules
     {
         var userGroup = app.MapGroup(BASE_URL);
 
-        userGroup.MapPut("example/{userId}", ExampleUsers);
         userGroup.MapPost("login", UserLogin)
             .WithName("LoginUser")
             .WithOpenApi(op =>
@@ -44,14 +43,14 @@ public static class UserModules
             .ProducesProblem(StatusCodes.Status401Unauthorized);
     }
 
-    private static async Task<IResult> ExampleUsers(
-        [FromRoute] Guid userID,
+    private static async Task<IResult> UpdateProfile(
+        [FromBody] UpdateProfileCommandRequest request,
         ISender sender,
         CancellationToken cancellationToken
         )
     {
-        ExampleCommand command = new ExampleCommand(userID);
-        Result<ExampleCommandResponse> result = await sender.Send(command, cancellationToken);
+        UpdateProfileCommand command = new UpdateProfileCommand(request);
+        Result<UpdateProfileCommandResponse> result = await sender.Send(command, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -62,7 +61,7 @@ public static class UserModules
             );
         }
 
-        return Results.Created($"{BASE_URL}{result.Value!.UserId}", result.Value);
+        return Results.Created($"{BASE_URL}{result}", result.Value);
     }
 
     private static async Task<Results<Ok<LoginUserCommandResponse>, ProblemHttpResult>> UserLogin(
