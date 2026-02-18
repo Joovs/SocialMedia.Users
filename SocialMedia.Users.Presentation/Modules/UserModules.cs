@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Models;
 using SocialMedia.Users.Application.Commands.UpdateProfile;
 using SocialMedia.Users.Application.Shared;
+using SocialMedia.Users.Application.Users.Queries.SeeProfile;
 using SocialMedia.Users.Application.Users.Commands.UserLogin;
 
 namespace SocialMedia.Users.Presentation.Modules;
@@ -17,7 +18,7 @@ public static class UserModules
     public static void AddUserModules(this IEndpointRouteBuilder app)
     {
         var userGroup = app.MapGroup(BASE_URL);
-
+        userGroup.MapGet("{userId}", SeeProfile);
         userGroup.MapPost("login", UserLogin)
             .WithName("LoginUser")
             .WithOpenApi(op =>
@@ -63,7 +64,26 @@ public static class UserModules
 
         return Results.Created($"{BASE_URL}{result}", result.Value);
     }
+    private static async Task<IResult> SeeProfile(
+        [FromRoute] Guid userId,
+        ISender sender,
+        CancellationToken cancellationToken
+        )
+    {
+        SeeProfileQuery query = new SeeProfileQuery(userId);
+        Result<SeeProfileQueryResponse> result = await sender.Send(query, cancellationToken);
 
+        if (!result.IsSuccess)
+        {
+            return Results.Problem(
+                detail: result.Error?.ErrorMessage ?? result.Message,
+                statusCode: result.StatusCode ?? 400,
+                title: result.Error?.ErrorCode
+            );
+        }
+
+        return Results.Ok(result.Value);
+    }
     private static async Task<Results<Ok<LoginUserCommandResponse>, ProblemHttpResult>> UserLogin(
     [FromBody] LoginUserCommandRequest request,
     ISender sender,

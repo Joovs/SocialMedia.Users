@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMedia.Users.Application.Repositories;
+using SocialMedia.Users.Domain.Entities;
+using SocialMedia.Users.Domain.Entities.Models;
 using SocialMedia.Users.Domain.Entities.UserEntity;
 using SocialMedia.Users.Domain.Entities.UserEntity.Models.UpdateProfile;
 using SocialMedia.Users.Domain.Exceptions;
@@ -57,5 +59,36 @@ public class UserRepository : IUserRepository
             Password = user.Password,
             UpdatedAt = user.UpdateAt
         };
+    }
+
+    public async Task<UserProfile> SeeProfile(Guid userId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            UserProfile? userProfile = await (from us in _context.Users
+                                              where us.Id == userId
+                                              select new UserProfile
+                                              {
+                                                  Id = us.Id,
+                                                  Username = us.Username,
+                                                  Lastname = us.LastName,
+                                                  Password = us.Password,
+                                                  CreatedAt = us.CreatedAt,
+                                                  UpdateAt = us.UpdateAt,
+                                                  Posted = (from po in _context.Posts
+                                                            where po.UserId == userId
+                                                            select new GetPosts
+                                                            {
+                                                                Id = po.Id,
+                                                                UserId = po.UserId,
+                                                                Body = po.Body,
+                                                                CreatedAt = po.CreatedAt
+                                                            }).ToList()
+                                              }).FirstOrDefaultAsync(cancellationToken);
+            return userProfile;
+        } catch (Exception ex)
+        {
+            throw new Exception($"Data could not be fetch: {ex.Message}");
+        }
     }
 }
